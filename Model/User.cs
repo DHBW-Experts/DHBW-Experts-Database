@@ -3,12 +3,9 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace DatabaseAPI.Model
-{
-    public partial class User
-    {
-        public User()
-        {
+namespace DatabaseAPI.Model {
+    public partial class User {
+        public User() {
             TagValidations = new HashSet<TagValidation>();
             Tags = new HashSet<Tag>();
         }
@@ -24,8 +21,8 @@ namespace DatabaseAPI.Model
         public string Bio { get; set; }
         public string RfidId { get; set; }
         public string PwHash { get; set; }
-        public bool IsConfirmed { get; set; }
-        public string ConfirmationId { get; set; }
+        public bool IsVerified { get; set; }
+        public int VerificationId { get; set; }
         public DateTime? TmsCreated { get; set; }
 
         public virtual Dhbw DhbwNavigation { get; set; }

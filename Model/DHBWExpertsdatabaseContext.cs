@@ -4,17 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace DatabaseAPI.Model
-{
-    public partial class DHBWExpertsdatabaseContext : DbContext
-    {
-        public DHBWExpertsdatabaseContext()
-        {
+namespace DatabaseAPI.Model {
+    public partial class DHBWExpertsdatabaseContext : DbContext {
+        public DHBWExpertsdatabaseContext() {
         }
 
         public DHBWExpertsdatabaseContext(DbContextOptions<DHBWExpertsdatabaseContext> options)
-            : base(options)
-        {
+            : base(options) {
         }
 
         public virtual DbSet<Dhbw> Dhbws { get; set; }
@@ -22,20 +18,16 @@ namespace DatabaseAPI.Model
         public virtual DbSet<TagValidation> TagValidations { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+            if (!optionsBuilder.IsConfigured) {
                 optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("DHEX_DATABASE"));
             }
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+        protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
-            modelBuilder.Entity<Dhbw>(entity =>
-            {
+            modelBuilder.Entity<Dhbw>(entity => {
                 entity.HasKey(e => e.Location)
                     .HasName("PK__DHBW__7B4298B4DBC5F1CC");
 
@@ -52,8 +44,7 @@ namespace DatabaseAPI.Model
                     .HasColumnName("EMAIL-DOMAIN");
             });
 
-            modelBuilder.Entity<Tag>(entity =>
-            {
+            modelBuilder.Entity<Tag>(entity => {
                 entity.ToTable("TAG");
 
                 entity.Property(e => e.TagId).HasColumnName("TAG-ID");
@@ -74,13 +65,12 @@ namespace DatabaseAPI.Model
                 entity.HasOne(d => d.UserNavigation)
                     .WithMany(p => p.Tags)
                     .HasForeignKey(d => d.User)
-                    .HasConstraintName("FK__TAG__USER__07C12930");
+                    .HasConstraintName("FK__TAG__USER__1DB06A4F");
             });
 
-            modelBuilder.Entity<TagValidation>(entity =>
-            {
+            modelBuilder.Entity<TagValidation>(entity => {
                 entity.HasKey(e => e.ValidationId)
-                    .HasName("PK__TAG-VALI__E9A8CAA1FE1997EC");
+                    .HasName("PK__TAG-VALI__E9A8CAA138C13657");
 
                 entity.ToTable("TAG-VALIDATION");
 
@@ -103,28 +93,24 @@ namespace DatabaseAPI.Model
                 entity.HasOne(d => d.TagNavigation)
                     .WithMany(p => p.TagValidations)
                     .HasForeignKey(d => d.Tag)
-                    .HasConstraintName("FK__TAG-VALIDAT__TAG__0B91BA14");
+                    .HasConstraintName("FK__TAG-VALIDAT__TAG__2180FB33");
 
                 entity.HasOne(d => d.ValidatedByNavigation)
                     .WithMany(p => p.TagValidations)
                     .HasForeignKey(d => d.ValidatedBy)
-                    .HasConstraintName("FK__TAG-VALID__VALID__0C85DE4D");
+                    .HasConstraintName("FK__TAG-VALID__VALID__22751F6C");
             });
 
-            modelBuilder.Entity<User>(entity =>
-            {
+            modelBuilder.Entity<User>(entity => {
                 entity.ToTable("USER");
 
-                entity.HasIndex(e => e.Email, "UQ__USER__161CF7248441E8B6")
+                entity.HasIndex(e => e.Email, "UQ__USER__161CF72419947BE3")
                     .IsUnique();
 
-                entity.HasIndex(e => e.RfidId, "UQ__USER__2468517CDBCB09D4")
+                entity.HasIndex(e => e.RfidId, "UQ__USER__2468517CA5C415B6")
                     .IsUnique();
 
-                entity.HasIndex(e => e.PwHash, "UQ__USER__6828FAFE118A310D")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.ConfirmationId, "UQ__USER__EEBB967A77D36F6A")
+                entity.HasIndex(e => e.PwHash, "UQ__USER__6828FAFE13946EF5")
                     .IsUnique();
 
                 entity.Property(e => e.UserId).HasColumnName("USER-ID");
@@ -138,12 +124,6 @@ namespace DatabaseAPI.Model
                     .HasMaxLength(30)
                     .IsUnicode(false)
                     .HasColumnName("CITY");
-
-                entity.Property(e => e.ConfirmationId)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("CONFIRMATION-ID");
 
                 entity.Property(e => e.Course)
                     .IsRequired()
@@ -174,7 +154,7 @@ namespace DatabaseAPI.Model
                     .IsUnicode(false)
                     .HasColumnName("FIRSTNAME");
 
-                entity.Property(e => e.IsConfirmed).HasColumnName("IS-CONFIRMED");
+                entity.Property(e => e.IsVerified).HasColumnName("IS-VERIFIED");
 
                 entity.Property(e => e.Lastname)
                     .IsRequired()
@@ -198,10 +178,12 @@ namespace DatabaseAPI.Model
                     .HasColumnName("TMS-CREATED")
                     .HasDefaultValueSql("(getdate())");
 
+                entity.Property(e => e.VerificationId).HasColumnName("VERIFICATION-ID");
+
                 entity.HasOne(d => d.DhbwNavigation)
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.Dhbw)
-                    .HasConstraintName("FK__USER__DHBW__7A672E12");
+                    .HasConstraintName("FK__USER__DHBW__18EBB532");
             });
 
             OnModelCreatingPartial(modelBuilder);
