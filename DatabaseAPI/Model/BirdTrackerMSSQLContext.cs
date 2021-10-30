@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace DatabaseAPI
+namespace DatabaseAPI.Model
 {
     public partial class BirdTrackerMSSQLContext : DbContext
     {

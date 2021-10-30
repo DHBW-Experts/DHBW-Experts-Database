@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Xml;
 using System;
+using DatabaseAPI.Model;
 
 namespace DatabaseAPI
 {

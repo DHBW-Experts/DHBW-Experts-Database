@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Script;
+using DatabaseAPI.Model;
 
 namespace DatabaseAPI.Controllers
 {

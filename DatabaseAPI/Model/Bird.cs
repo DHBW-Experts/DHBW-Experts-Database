@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace DatabaseAPI
+namespace DatabaseAPI.Model
 {
     public partial class Bird
     {
