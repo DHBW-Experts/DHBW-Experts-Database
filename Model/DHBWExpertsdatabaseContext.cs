@@ -17,6 +17,7 @@ namespace DatabaseAPI.Model {
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<TagValidation> TagValidations { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UsersNotSensitive> UsersNotSensitives { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             if (!optionsBuilder.IsConfigured) {
@@ -184,6 +185,63 @@ namespace DatabaseAPI.Model {
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.Dhbw)
                     .HasConstraintName("FK__USER__DHBW__18EBB532");
+            });
+
+            modelBuilder.Entity<UsersNotSensitive>(entity => {
+                entity.HasNoKey();
+
+                entity.ToView("USERS-NOT-SENSITIVE");
+
+                entity.Property(e => e.Bio)
+                    .HasMaxLength(1000)
+                    .IsUnicode(false)
+                    .HasColumnName("BIO");
+
+                entity.Property(e => e.City)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("CITY");
+
+                entity.Property(e => e.Course)
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("COURSE");
+
+                entity.Property(e => e.CourseAbr)
+                    .IsRequired()
+                    .HasMaxLength(15)
+                    .IsUnicode(false)
+                    .HasColumnName("COURSE-ABR");
+
+                entity.Property(e => e.Dhbw)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("DHBW");
+
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(81)
+                    .IsUnicode(false)
+                    .HasColumnName("EMAIL");
+
+                entity.Property(e => e.Firstname)
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("FIRSTNAME");
+
+                entity.Property(e => e.Lastname)
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("LASTNAME");
+
+                entity.Property(e => e.TmsCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("TMS-CREATED");
+
+                entity.Property(e => e.UserId).HasColumnName("USER-ID");
             });
 
             OnModelCreatingPartial(modelBuilder);

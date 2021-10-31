@@ -10,37 +10,34 @@ using DatabaseAPI.Model;
 namespace DatabaseAPI.Controllers {
     [Route("Users")]
     [ApiController]
-    public class RequestsController : ControllerBase {
+    public class UserController : ControllerBase {
         private readonly DHBWExpertsdatabaseContext _context;
 
         //The context is managed by the WEBAPI and used here via Dependency Injection.
-        public RequestsController(DHBWExpertsdatabaseContext context) {
+        public UserController(DHBWExpertsdatabaseContext context) {
             _context = context;
         }
 
-        //GET: /Users
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers() {
-            var result = await _context.Users.ToListAsync();
-
-            foreach (var item in Request.Headers) {
-                Console.WriteLine(item.ToString());
+        // GET: /Users/id/5
+        //The user assosiated with the specified ID is returned, if found.
+        [HttpGet("id/{id:int}")]
+        public async Task<ActionResult<UsersNotSensitive>> GetUser(int id) {
+            var result = await _context.UsersNotSensitives.Where(e => e.UserId == id).FirstOrDefaultAsync();
+            if (result is not null) {
+                return result;
             }
-
-            return result;
+            return NotFound();
         }
 
-        // GET: /Users/5
-        //The user assosiated with the specified ID is returned, if found.
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<User>> GetUser(int id) {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null) {
-                return NotFound();
+        //GET: /Users/rfid/432a9e7b626c87f
+        [HttpGet("rfid/{rfidId}")]
+        public async Task<ActionResult<UsersNotSensitive>> GetUser(string rfidId) {
+            var result = await _context.Users.Where(e => e.RfidId == rfidId).FirstOrDefaultAsync();
+            if (result is not null) {
+                int id = result.UserId;
+                return await _context.UsersNotSensitives.Where(e => e.UserId == id).FirstOrDefaultAsync();
             }
-
-            return user;
+            return NotFound();
         }
 
     }
