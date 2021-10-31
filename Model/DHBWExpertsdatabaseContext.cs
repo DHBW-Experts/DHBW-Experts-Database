@@ -30,7 +30,7 @@ namespace DatabaseAPI.Model {
 
             modelBuilder.Entity<Dhbw>(entity => {
                 entity.HasKey(e => e.Location)
-                    .HasName("PK__DHBW__7B4298B4DBC5F1CC");
+                    .HasName("PK__DHBW__7B4298B4BC48304A");
 
                 entity.ToTable("DHBW");
 
@@ -66,12 +66,12 @@ namespace DatabaseAPI.Model {
                 entity.HasOne(d => d.UserNavigation)
                     .WithMany(p => p.Tags)
                     .HasForeignKey(d => d.User)
-                    .HasConstraintName("FK__TAG__USER__1DB06A4F");
+                    .HasConstraintName("FK__TAG__USER__66603565");
             });
 
             modelBuilder.Entity<TagValidation>(entity => {
                 entity.HasKey(e => e.ValidationId)
-                    .HasName("PK__TAG-VALI__E9A8CAA138C13657");
+                    .HasName("PK__TAG-VALI__E9A8CAA1AFE9D536");
 
                 entity.ToTable("TAG-VALIDATION");
 
@@ -94,24 +94,21 @@ namespace DatabaseAPI.Model {
                 entity.HasOne(d => d.TagNavigation)
                     .WithMany(p => p.TagValidations)
                     .HasForeignKey(d => d.Tag)
-                    .HasConstraintName("FK__TAG-VALIDAT__TAG__2180FB33");
+                    .HasConstraintName("FK__TAG-VALIDAT__TAG__6A30C649");
 
                 entity.HasOne(d => d.ValidatedByNavigation)
                     .WithMany(p => p.TagValidations)
                     .HasForeignKey(d => d.ValidatedBy)
-                    .HasConstraintName("FK__TAG-VALID__VALID__22751F6C");
+                    .HasConstraintName("FK__TAG-VALID__VALID__6B24EA82");
             });
 
             modelBuilder.Entity<User>(entity => {
                 entity.ToTable("USER");
 
-                entity.HasIndex(e => e.Email, "UQ__USER__161CF72419947BE3")
+                entity.HasIndex(e => new { e.Email, e.Dhbw }, "UNIQUE_MAIL")
                     .IsUnique();
 
-                entity.HasIndex(e => e.RfidId, "UQ__USER__2468517CA5C415B6")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.PwHash, "UQ__USER__6828FAFE13946EF5")
+                entity.HasIndex(e => e.PwHash, "UQ__USER__6828FAFEBC55EBD1")
                     .IsUnique();
 
                 entity.Property(e => e.UserId).HasColumnName("USER-ID");
@@ -184,7 +181,7 @@ namespace DatabaseAPI.Model {
                 entity.HasOne(d => d.DhbwNavigation)
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.Dhbw)
-                    .HasConstraintName("FK__USER__DHBW__18EBB532");
+                    .HasConstraintName("FK__USER__DHBW__619B8048");
             });
 
             modelBuilder.Entity<UsersNotSensitive>(entity => {
@@ -230,6 +227,8 @@ namespace DatabaseAPI.Model {
                     .HasMaxLength(30)
                     .IsUnicode(false)
                     .HasColumnName("FIRSTNAME");
+
+                entity.Property(e => e.IsVerified).HasColumnName("IS-VERIFIED");
 
                 entity.Property(e => e.Lastname)
                     .IsRequired()

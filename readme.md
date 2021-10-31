@@ -10,7 +10,7 @@ Make sure that the following components are installed in your system:
 2. Visual Studio Code IDE
 3. VSCode C# Extension (ID: `ms-dotnettools.csharp`)
 
-When you are done, run `dotnet nuget add source --name nuget.org https://api.nuget.org/v3/index.json` in this directory to make the project compatible with the IDE
+When you are done, run `dotnet nuget add source --name nuget.org https://api.nuget.org/v3/index.json` in this directory to make the IDE compatible
 
 ### press `F5` to start the Server
 

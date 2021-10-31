@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +18,24 @@ namespace DatabaseAPI.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> register(User user) {
-            return BadRequest("not yet Implemented: registration");
+            if (user.VerificationId != 0 || user.UserId != 0 || user.IsVerified != false) {
+                return Conflict("Data provied will be set automaticly");
+            }
+            user.VerificationId = Functions.generateVerificationCode();
+            _context.Users.Add(user);
+
+            try {
+                await _context.SaveChangesAsync();
+            } catch (DbUpdateException) {
+                return Conflict();
+            }
+
+            var result = _context.UsersNotSensitives.Where(e => e.UserId == user.UserId).FirstOrDefault();
+            return CreatedAtAction("GetUserById", new { controller = "User", id = user.UserId }, result);
         }
 
         [HttpPut("{userId:int}/{verificationId:int}")]
         public async Task<IActionResult> verify(int userId, int verificationId) {
-            Console.WriteLine(userId);
-            Console.WriteLine(verificationId);
             User toBeVerified = await _context.Users.FindAsync(userId);
             if (toBeVerified is not null && !toBeVerified.IsVerified) {
                 int expectedID = toBeVerified.VerificationId;

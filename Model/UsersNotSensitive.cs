@@ -16,6 +16,7 @@ namespace DatabaseAPI.Model
         public string Email { get; set; }
         public string City { get; set; }
         public string Bio { get; set; }
+        public bool IsVerified { get; set; }
         public DateTime? TmsCreated { get; set; }
     }
 }

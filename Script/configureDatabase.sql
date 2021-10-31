@@ -1,7 +1,3 @@
---BEFORE EXECUTION
--- use MASTER DB to Drop DHBW-Experts-database
--- recreate DHBW-Experts-database
-
 -- Create DHBW table
 CREATE TABLE "DHBW" (
     "LOCATION"      VARCHAR(30) NOT NULL PRIMARY KEY,
@@ -58,9 +54,9 @@ SELECT [USER].[USER-ID],
        CONCAT([USER].[EMAIL], '@', [DHBW].[EMAIL-DOMAIN]) AS EMAIL,
        [USER].[CITY],
        [USER].[BIO],
+       [USER].[IS-VERIFIED],
        [USER].[TMS-CREATED]
   FROM [dbo].[USER]
   INNER JOIN [DHBW] ON [USER].[DHBW] = [DHBW].[LOCATION]
-  WHERE [IS-VERIFIED] = 1;
   GO
  
