@@ -2,6 +2,8 @@
 
 This repository contains the source code of the DHBW-Experts Database API.
 
+API is available via https://dhbw-experts-api.azurewebsites.net/
+
 ## Setup
 
 Make sure that the following components are installed in your system:
@@ -14,7 +16,7 @@ When you are done, run `dotnet nuget add source --name nuget.org https://api.nug
 
 ### press `F5` to start the Server
 
-API can be reached by Postman or VSCode Thunder Client via http://localhost:5000. (Not yet HTTPS compatible!)
+API can be reached by Postman or VSCode Thunder Client via http://localhost.
 
 ## Interfaces
 
