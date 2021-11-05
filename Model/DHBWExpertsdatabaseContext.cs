@@ -19,12 +19,6 @@ namespace DatabaseAPI.Model {
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UsersNotSensitive> UsersNotSensitives { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            if (!optionsBuilder.IsConfigured) {
-                optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("DHEX_DATABASE"));
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
