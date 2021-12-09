@@ -46,6 +46,68 @@ namespace DatabaseAPI.Controllers {
             return NotFound();
         }
 
+        // GET: /Users/5/contacts
+        //The user assosiated contacts of the user a returned
+        [HttpGet("{id:int}/contacts", Name = "GetContactsByUserId")]
+        public async Task<ActionResult<IEnumerable<UsersNotSensitive>>> GetContacsByUserID(int id) {
+
+            var query =
+                from contact in _context.Contacts
+                join user in _context.UsersNotSensitives on contact.Contact1 equals user.UserId
+                where contact.User == id
+                select user;
+
+            var result = await query.ToListAsync();
+
+            if (result is not null) {
+                return result;
+            }
+            return NotFound();
+        }
+
+        // GET: /Users/5/contacts
+        //The user assosiated contacts of the user a returned
+        [HttpPost("{id:int}/contacts/{idContact:int}", Name = "AddContactToUser")]
+        public async Task<ActionResult<IEnumerable<UsersNotSensitive>>> AddContactToUser(int id, int idContact) {
+
+            if (id == idContact) {
+                return BadRequest();
+            }
+
+            Contact contact = new Contact();
+
+            contact.User = id;
+            contact.Contact1 = idContact;
+
+            _context.Contacts.Add(contact);
+
+            try {
+                await _context.SaveChangesAsync();
+            } catch (DbUpdateException) {
+                return Conflict();
+            }
+
+            return Ok();
+        }
+
+        // GET: /Users/5/tags
+        //The user assosiated contacts of the user a returned
+        [HttpGet("{id:int}/tags", Name = "GetTagsByUserId")]
+        public async Task<ActionResult<IEnumerable<Tag>>> GetTagsByUserID(int id) {
+
+            var query =
+                from tag in _context.Tags
+                where tag.User == id
+                select tag;
+
+            var result = await query.ToListAsync();
+
+            if (result is not null) {
+                return result;
+            }
+            return NotFound();
+        }
+
     }
 
 

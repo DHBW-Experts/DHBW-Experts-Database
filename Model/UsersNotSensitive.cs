@@ -13,6 +13,7 @@ namespace DatabaseAPI.Model
         public string Dhbw { get; set; }
         public string CourseAbr { get; set; }
         public string Course { get; set; }
+        public string Specialization { get; set; }
         public string Email { get; set; }
         public string City { get; set; }
         public string Bio { get; set; }

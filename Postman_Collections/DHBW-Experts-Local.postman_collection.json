@@ -1,0 +1,76 @@
+{
+	"info": {
+		"_postman_id": "76d49f60-f20d-44ff-8134-732285d0891c",
+		"name": "DHBW-Experts-Local",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET User by User-ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/users/id/1000",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"users",
+						"id",
+						"1000"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET User by RFID-ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		},
+		{
+			"name": "GET Contacts of User by UserID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		},
+		{
+			"name": "GET Tag-Validations by Tag-ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/tags/validations/1000",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"tags",
+						"validations",
+						"1000"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Tags by User-ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		}
+	]
+}

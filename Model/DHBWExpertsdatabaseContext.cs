@@ -13,6 +13,7 @@ namespace DatabaseAPI.Model {
             : base(options) {
         }
 
+        public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Dhbw> Dhbws { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<TagValidation> TagValidations { get; set; }
@@ -22,9 +23,37 @@ namespace DatabaseAPI.Model {
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
+            modelBuilder.Entity<Contact>(entity => {
+                entity.HasKey(e => new { e.User, e.Contact1 })
+                    .HasName("CONTACT_PK");
+
+                entity.ToTable("CONTACT");
+
+                entity.Property(e => e.User).HasColumnName("USER");
+
+                entity.Property(e => e.Contact1).HasColumnName("CONTACT");
+
+                entity.Property(e => e.TmsCreated)
+                    .HasColumnType("datetime")
+                    .HasColumnName("TMS-CREATED")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.Contact1Navigation)
+                    .WithMany(p => p.ContactContact1Navigations)
+                    .HasForeignKey(d => d.Contact1)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("CONTACT_FK-CONTACT");
+
+                entity.HasOne(d => d.UserNavigation)
+                    .WithMany(p => p.ContactUserNavigations)
+                    .HasForeignKey(d => d.User)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("CONTACT_FK-USER");
+            });
+
             modelBuilder.Entity<Dhbw>(entity => {
                 entity.HasKey(e => e.Location)
-                    .HasName("PK__DHBW__7B4298B4BC48304A");
+                    .HasName("PK__DHBW__7B4298B47CB070B2");
 
                 entity.ToTable("DHBW");
 
@@ -60,14 +89,17 @@ namespace DatabaseAPI.Model {
                 entity.HasOne(d => d.UserNavigation)
                     .WithMany(p => p.Tags)
                     .HasForeignKey(d => d.User)
-                    .HasConstraintName("FK__TAG__USER__66603565");
+                    .HasConstraintName("TAG_FK-USER");
             });
 
             modelBuilder.Entity<TagValidation>(entity => {
                 entity.HasKey(e => e.ValidationId)
-                    .HasName("PK__TAG-VALI__E9A8CAA1AFE9D536");
+                    .HasName("TAG-VAL_PK");
 
                 entity.ToTable("TAG-VALIDATION");
+
+                entity.HasIndex(e => new { e.ValidatedBy, e.Tag }, "ONE-VALIDATION-PER-TAG")
+                    .IsUnique();
 
                 entity.Property(e => e.ValidationId).HasColumnName("VALIDATION-ID");
 
@@ -88,21 +120,18 @@ namespace DatabaseAPI.Model {
                 entity.HasOne(d => d.TagNavigation)
                     .WithMany(p => p.TagValidations)
                     .HasForeignKey(d => d.Tag)
-                    .HasConstraintName("FK__TAG-VALIDAT__TAG__6A30C649");
+                    .HasConstraintName("TAG-VAL_FK-TAG");
 
                 entity.HasOne(d => d.ValidatedByNavigation)
                     .WithMany(p => p.TagValidations)
                     .HasForeignKey(d => d.ValidatedBy)
-                    .HasConstraintName("FK__TAG-VALID__VALID__6B24EA82");
+                    .HasConstraintName("TAG-VAL_FK-VALIDATED-BY");
             });
 
             modelBuilder.Entity<User>(entity => {
                 entity.ToTable("USER");
 
-                entity.HasIndex(e => new { e.Email, e.Dhbw }, "UNIQUE_MAIL")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.PwHash, "UQ__USER__6828FAFEBC55EBD1")
+                entity.HasIndex(e => new { e.Dhbw, e.EmailPrefix }, "USER_UNIQUE-EMAILS")
                     .IsUnique();
 
                 entity.Property(e => e.UserId).HasColumnName("USER-ID");
@@ -130,15 +159,16 @@ namespace DatabaseAPI.Model {
                     .HasColumnName("COURSE-ABR");
 
                 entity.Property(e => e.Dhbw)
+                    .IsRequired()
                     .HasMaxLength(30)
                     .IsUnicode(false)
                     .HasColumnName("DHBW");
 
-                entity.Property(e => e.Email)
+                entity.Property(e => e.EmailPrefix)
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false)
-                    .HasColumnName("EMAIL");
+                    .HasColumnName("EMAIL-PREFIX");
 
                 entity.Property(e => e.Firstname)
                     .IsRequired()
@@ -165,6 +195,11 @@ namespace DatabaseAPI.Model {
                     .IsUnicode(false)
                     .HasColumnName("RFID-ID");
 
+                entity.Property(e => e.Specialization)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("SPECIALIZATION");
+
                 entity.Property(e => e.TmsCreated)
                     .HasColumnType("datetime")
                     .HasColumnName("TMS-CREATED")
@@ -175,7 +210,8 @@ namespace DatabaseAPI.Model {
                 entity.HasOne(d => d.DhbwNavigation)
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.Dhbw)
-                    .HasConstraintName("FK__USER__DHBW__619B8048");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("USER_FK-DHBW");
             });
 
             modelBuilder.Entity<UsersNotSensitive>(entity => {
@@ -206,6 +242,7 @@ namespace DatabaseAPI.Model {
                     .HasColumnName("COURSE-ABR");
 
                 entity.Property(e => e.Dhbw)
+                    .IsRequired()
                     .HasMaxLength(30)
                     .IsUnicode(false)
                     .HasColumnName("DHBW");
@@ -229,6 +266,11 @@ namespace DatabaseAPI.Model {
                     .HasMaxLength(30)
                     .IsUnicode(false)
                     .HasColumnName("LASTNAME");
+
+                entity.Property(e => e.Specialization)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("SPECIALIZATION");
 
                 entity.Property(e => e.TmsCreated)
                     .HasColumnType("datetime")

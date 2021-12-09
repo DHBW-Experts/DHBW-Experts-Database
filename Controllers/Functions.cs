@@ -13,7 +13,7 @@ namespace DatabaseAPI.Controllers {
 
         public static int generateVerificationCode() {
             var rand = new Random();
-            return rand.Next(999999999) + 1;
+            return rand.Next(999999) + 1;
         }
     }
 }
