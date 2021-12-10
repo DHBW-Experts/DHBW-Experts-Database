@@ -71,6 +71,9 @@ namespace DatabaseAPI.Model {
             modelBuilder.Entity<Tag>(entity => {
                 entity.ToTable("TAG");
 
+                entity.HasIndex(e => new { e.Tag1, e.User }, "ONE-TAG-PER-USER")
+                    .IsUnique();
+
                 entity.Property(e => e.TagId).HasColumnName("TAG-ID");
 
                 entity.Property(e => e.Tag1)

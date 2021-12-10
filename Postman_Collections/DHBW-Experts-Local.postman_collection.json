@@ -30,7 +30,18 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": null
+				"url": {
+					"raw": "http://localhost/users/rfid/TEST-RFID-ID-0815",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"users",
+						"rfid",
+						"TEST-RFID-ID-0815"
+					]
+				}
 			},
 			"response": []
 		},
@@ -39,7 +50,18 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": null
+				"url": {
+					"raw": "http://localhost/users/1000/contacts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"users",
+						"1000",
+						"contacts"
+					]
+				}
 			},
 			"response": []
 		},
@@ -68,7 +90,159 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": null
+				"url": {
+					"raw": "http://localhost/users/1000/tags",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"users",
+						"1000",
+						"tags"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Add User to Contact List",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/users/1001/contacts/add/1002",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"users",
+						"1001",
+						"contacts",
+						"add",
+						"1002"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Distinct Tags by Text",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/search/tags/ada",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"search",
+						"tags",
+						"ada"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Distinct Users by Tag",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/search/users/tags/latex",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"search",
+						"users",
+						"tags",
+						"latex"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Add Tag to User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/users/1000/tags/add/TagText",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"users",
+						"1000",
+						"tags",
+						"add",
+						"TagText"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Edit User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": 1006,\r\n    \"bio\": \"Hello World123\",\r\n    \"city\": \"Musterstadt\",\r\n    \"course\": \"Informatik321\",\r\n    \"courseAbr\": \"TINF20B2\",\r\n    \"pwhash\": \"EXAMPLE\",\r\n    \"specialization\": \"Test\",\r\n    \"rfidid\": \"TestRFID\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/users/1000/edit",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"users",
+						"1000",
+						"edit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Register User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bio\": \"Hello World\",\r\n    \"city\": \"Musterstadt\",\r\n    \"course\": \"Informatik\",\r\n    \"courseAbr\": \"TINF20B2\",\r\n    \"dhbw\": \"Karlsruhe\",\r\n    \"emailprefix\": \"doe.john\",\r\n    \"firstname\": \"John\",\r\n    \"lastname\": \"Doe\",\r\n    \"rfidid\": null,\r\n    \"pwhash\": \"EXAMPLE\",\r\n    \"specialization\": \"Test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"register"
+					]
+				}
 			},
 			"response": []
 		}

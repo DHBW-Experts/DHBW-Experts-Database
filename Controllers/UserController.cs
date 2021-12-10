@@ -67,7 +67,7 @@ namespace DatabaseAPI.Controllers {
 
         // GET: /Users/5/contacts
         //The user assosiated contacts of the user a returned
-        [HttpPost("{id:int}/contacts/{idContact:int}", Name = "AddContactToUser")]
+        [HttpPost("{id:int}/contacts/add/{idContact:int}", Name = "AddContactToUser")]
         public async Task<ActionResult<IEnumerable<UsersNotSensitive>>> AddContactToUser(int id, int idContact) {
 
             if (id == idContact) {
@@ -106,6 +106,93 @@ namespace DatabaseAPI.Controllers {
                 return result;
             }
             return NotFound();
+        }
+
+        // POST: /Users/5/tags
+        //The user assosiated contacts of the user a returned
+        [HttpPost("{id:int}/tags/add/{text}", Name = "AddTagToUser")]
+        public async Task<IActionResult> AddTagToUser(int id, string text) {
+
+            Tag tag = new Tag();
+
+            tag.User = id;
+            tag.Tag1 = text;
+
+            _context.Tags.Add(tag);
+
+            try {
+                await _context.SaveChangesAsync();
+            } catch (DbUpdateException) {
+                return Conflict();
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("{id:int}/edit", Name = "editUser")]
+        public async Task<IActionResult> editUser(User editedUser) {
+
+            var user = _context.Users.FirstOrDefault(u => u.UserId == editedUser.UserId);
+
+            Console.WriteLine(editedUser);
+            Console.WriteLine("CourseAbr: " + editedUser.CourseAbr);
+            Console.WriteLine("Course: " + editedUser.Course);
+            Console.WriteLine("Specialization: " + editedUser.Specialization);
+            Console.WriteLine("City: " + editedUser.City);
+            Console.WriteLine("Bio: " + editedUser.Bio);
+            Console.WriteLine("RfidId: " + editedUser.RfidId);
+            Console.WriteLine("PwHash: " + editedUser.PwHash);
+            Console.WriteLine("IsVerified: " + editedUser.IsVerified);
+            Console.WriteLine("TmsCreated" + editedUser.TmsCreated == null);
+            Console.WriteLine("PwHash: " + editedUser.PwHash);
+            Console.WriteLine("VerificationId: " + editedUser.VerificationId);
+            Console.WriteLine(editedUser.Firstname == null);
+
+            bool isValid = (
+                (user.VerificationId == editedUser.VerificationId || editedUser.VerificationId == 0) &&
+                (user.IsVerified == editedUser.IsVerified || editedUser.IsVerified == false) &&
+                (user.Firstname == editedUser.Firstname || editedUser.Firstname == null) &&
+                (user.Lastname == editedUser.Lastname || editedUser.Lastname == null) &&
+                (user.EmailPrefix == editedUser.EmailPrefix || editedUser.EmailPrefix == null) &&
+                (user.Dhbw == editedUser.Dhbw || editedUser.Dhbw == null) &&
+                (user.TmsCreated == editedUser.TmsCreated || editedUser.TmsCreated == null)
+            );
+
+            Console.WriteLine(isValid);
+
+            if (!isValid) {
+                return Conflict("Some data provied can't be changed");
+            }
+
+            if (editedUser.Course != null) {
+                user.Course = editedUser.Course;
+            }
+            if (editedUser.CourseAbr != null) {
+                user.CourseAbr = editedUser.CourseAbr;
+            }
+            if (editedUser.Specialization != null) {
+                user.Specialization = editedUser.Specialization;
+            }
+            if (editedUser.City != null) {
+                user.City = editedUser.CourseAbr;
+            }
+            if (editedUser.Bio != null) {
+                user.Bio = editedUser.Bio;
+            }
+            if (editedUser.RfidId != null) {
+                user.RfidId = editedUser.RfidId;
+            }
+            if (editedUser.PwHash != null) {
+                user.PwHash = editedUser.PwHash;
+            }
+
+            try {
+                await _context.SaveChangesAsync();
+            } catch (DbUpdateException) {
+                return Conflict();
+            }
+
+            return Ok();
         }
 
     }
