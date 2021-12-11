@@ -22,14 +22,14 @@ namespace DatabaseAPI.Controllers {
         //The user assosiated with the specified ID is returned, if found.
         [HttpGet("{id:int}", Name = "getUserById")]
         public async Task<ActionResult<Object>> getUserById(int id) {
-            var query =  
+            var query =
                 from user in _context.Users
                 join loc in _context.Dhbws on user.Dhbw equals loc.Location
                 where user.UserId == id
                 select new {
                     userId = id,
                     firstName = user.Firstname,
-                    lastname = user.Lastname,
+                    lastName = user.Lastname,
                     dhbw = user.Dhbw,
                     course = user.Course,
                     courseAbr = user.CourseAbr,
@@ -52,14 +52,14 @@ namespace DatabaseAPI.Controllers {
         //GET: /Users/rfid/432a9e7b626c87f
         [HttpGet("rfid/{rfidId}")]
         public async Task<ActionResult<Object>> getUser(string rfidId) {
-            var query =  
+            var query =
                 from user in _context.Users
                 join loc in _context.Dhbws on user.Dhbw equals loc.Location
                 where user.RfidId == rfidId
                 select new {
                     userId = user.UserId,
                     firstName = user.Firstname,
-                    lastname = user.Lastname,
+                    lastName = user.Lastname,
                     dhbw = user.Dhbw,
                     course = user.Course,
                     courseAbr = user.CourseAbr,
@@ -92,7 +92,7 @@ namespace DatabaseAPI.Controllers {
                 select new {
                     userId = user.UserId,
                     firstName = user.Firstname,
-                    lastname = user.Lastname,
+                    lastName = user.Lastname,
                     dhbw = user.Dhbw,
                     course = user.Course,
                     courseAbr = user.CourseAbr,
@@ -191,7 +191,7 @@ namespace DatabaseAPI.Controllers {
         //The user assosiated contacts of the user a returned
         [HttpPost("{id:int}/tags/add/{text}", Name = "addTagToUser")]
         public async Task<IActionResult> addTagToUser(int id, string text) {
-            
+
 
             Tag tag = new Tag();
 
@@ -205,13 +205,13 @@ namespace DatabaseAPI.Controllers {
             } catch (DbUpdateException e) {
                 return Conflict(e);
             }
-            
+
             var result = new {
-                    tagId = tag.TagId,
-                    tag = tag.Tag1,
-                    user = tag.User,
-                    tmsCreated = tag.TmsCreated
-                };
+                tagId = tag.TagId,
+                tag = tag.Tag1,
+                user = tag.User,
+                tmsCreated = tag.TmsCreated
+            };
 
             return CreatedAtRoute("getTagByTagId", new { id = tag.TagId }, result);
         }
@@ -248,7 +248,7 @@ namespace DatabaseAPI.Controllers {
             Console.WriteLine(isValid);
 
             if (!isValid) {
-                return Conflict("Some data provied can't be changed");
+                return Conflict("Some data provided can't be changed");
             }
 
             if (editedUser.Course != null) {
