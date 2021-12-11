@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Model;
 
 namespace DatabaseAPI.Controllers {
-    [Route("Register")]
+    [Route("register")]
     [ApiController]
     public class RegistrationController : ControllerBase {
         private readonly DHBWExpertsdatabaseContext _context;
@@ -19,7 +19,7 @@ namespace DatabaseAPI.Controllers {
         [HttpPost]
         public async Task<IActionResult> register(User user) {
             if (user.VerificationId != 0 || user.UserId != 0 || user.IsVerified != false) {
-                return Conflict("Data provied will be set automaticly");
+                return Conflict("Data provided will be set automaticly");
             }
             user.VerificationId = Functions.generateVerificationCode();
             _context.Users.Add(user);
@@ -30,8 +30,22 @@ namespace DatabaseAPI.Controllers {
                 return Conflict();
             }
 
-            var result = _context.UsersNotSensitives.Where(e => e.UserId == user.UserId).FirstOrDefault();
-            return CreatedAtAction("GetUserById", new { controller = "User", id = user.UserId }, result);
+            var result = new {
+                userId = user.UserId,
+                firstName = user.Firstname,
+                lastname = user.Lastname,
+                dhbw = user.Dhbw,
+                course = user.Course,
+                courseAbr = user.CourseAbr,
+                specialization = user.Specialization,
+                email = user.EmailPrefix + "@" + (await _context.Dhbws.FindAsync(user.Dhbw)).EmailDomain,
+                city = user.City,
+                biographie = user.Bio,
+                isVerified = user.IsVerified,
+                tmsCreated = user.TmsCreated
+            };
+
+            return CreatedAtRoute("getUserById", new { id = user.UserId }, result);
         }
 
         [HttpPut("{userId:int}/{verificationId:int}")]
@@ -41,7 +55,15 @@ namespace DatabaseAPI.Controllers {
                 int expectedID = toBeVerified.VerificationId;
 
                 if (verificationId == expectedID) {
-                    await verify(toBeVerified);
+                    toBeVerified.IsVerified = true;
+
+                    _context.Users.Update(toBeVerified);
+
+                    try {
+                        await _context.SaveChangesAsync();
+                    } catch (DbUpdateConcurrencyException e) {
+                        Console.WriteLine(e);
+                    }
                     Console.Write("successfully verified: user {0}, id {1}", userId, verificationId);
                     return Ok();
                 }
@@ -51,18 +73,5 @@ namespace DatabaseAPI.Controllers {
             Console.Write("verification rejected: user not found or already verified! user {0}, id {1}", userId, verificationId);
             return BadRequest();
         }
-
-        private async Task verify(User user) {
-            user.IsVerified = true;
-
-            _context.Users.Update(user);
-
-            try {
-                await _context.SaveChangesAsync();
-            } catch (DbUpdateConcurrencyException e) {
-                Console.WriteLine(e);
-            }
-        }
-
     }
 }

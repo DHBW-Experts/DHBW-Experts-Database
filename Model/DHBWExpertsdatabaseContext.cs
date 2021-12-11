@@ -4,13 +4,17 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace DatabaseAPI.Model {
-    public partial class DHBWExpertsdatabaseContext : DbContext {
-        public DHBWExpertsdatabaseContext() {
+namespace DatabaseAPI.Model
+{
+    public partial class DHBWExpertsdatabaseContext : DbContext
+    {
+        public DHBWExpertsdatabaseContext()
+        {
         }
 
         public DHBWExpertsdatabaseContext(DbContextOptions<DHBWExpertsdatabaseContext> options)
-            : base(options) {
+            : base(options)
+        {
         }
 
         public virtual DbSet<Contact> Contacts { get; set; }
@@ -18,12 +22,13 @@ namespace DatabaseAPI.Model {
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<TagValidation> TagValidations { get; set; }
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<UsersNotSensitive> UsersNotSensitives { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
-            modelBuilder.Entity<Contact>(entity => {
+            modelBuilder.Entity<Contact>(entity =>
+            {
                 entity.HasKey(e => new { e.User, e.Contact1 })
                     .HasName("CONTACT_PK");
 
@@ -51,7 +56,8 @@ namespace DatabaseAPI.Model {
                     .HasConstraintName("CONTACT_FK-USER");
             });
 
-            modelBuilder.Entity<Dhbw>(entity => {
+            modelBuilder.Entity<Dhbw>(entity =>
+            {
                 entity.HasKey(e => e.Location)
                     .HasName("PK__DHBW__7B4298B47CB070B2");
 
@@ -68,7 +74,8 @@ namespace DatabaseAPI.Model {
                     .HasColumnName("EMAIL-DOMAIN");
             });
 
-            modelBuilder.Entity<Tag>(entity => {
+            modelBuilder.Entity<Tag>(entity =>
+            {
                 entity.ToTable("TAG");
 
                 entity.HasIndex(e => new { e.Tag1, e.User }, "ONE-TAG-PER-USER")
@@ -95,7 +102,8 @@ namespace DatabaseAPI.Model {
                     .HasConstraintName("TAG_FK-USER");
             });
 
-            modelBuilder.Entity<TagValidation>(entity => {
+            modelBuilder.Entity<TagValidation>(entity =>
+            {
                 entity.HasKey(e => e.ValidationId)
                     .HasName("TAG-VAL_PK");
 
@@ -131,7 +139,8 @@ namespace DatabaseAPI.Model {
                     .HasConstraintName("TAG-VAL_FK-VALIDATED-BY");
             });
 
-            modelBuilder.Entity<User>(entity => {
+            modelBuilder.Entity<User>(entity =>
+            {
                 entity.ToTable("USER");
 
                 entity.HasIndex(e => new { e.Dhbw, e.EmailPrefix }, "USER_UNIQUE-EMAILS")
@@ -215,71 +224,6 @@ namespace DatabaseAPI.Model {
                     .HasForeignKey(d => d.Dhbw)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("USER_FK-DHBW");
-            });
-
-            modelBuilder.Entity<UsersNotSensitive>(entity => {
-                entity.HasNoKey();
-
-                entity.ToView("USERS-NOT-SENSITIVE");
-
-                entity.Property(e => e.Bio)
-                    .HasMaxLength(1000)
-                    .IsUnicode(false)
-                    .HasColumnName("BIO");
-
-                entity.Property(e => e.City)
-                    .HasMaxLength(30)
-                    .IsUnicode(false)
-                    .HasColumnName("CITY");
-
-                entity.Property(e => e.Course)
-                    .IsRequired()
-                    .HasMaxLength(30)
-                    .IsUnicode(false)
-                    .HasColumnName("COURSE");
-
-                entity.Property(e => e.CourseAbr)
-                    .IsRequired()
-                    .HasMaxLength(15)
-                    .IsUnicode(false)
-                    .HasColumnName("COURSE-ABR");
-
-                entity.Property(e => e.Dhbw)
-                    .IsRequired()
-                    .HasMaxLength(30)
-                    .IsUnicode(false)
-                    .HasColumnName("DHBW");
-
-                entity.Property(e => e.Email)
-                    .IsRequired()
-                    .HasMaxLength(81)
-                    .IsUnicode(false)
-                    .HasColumnName("EMAIL");
-
-                entity.Property(e => e.Firstname)
-                    .IsRequired()
-                    .HasMaxLength(30)
-                    .IsUnicode(false)
-                    .HasColumnName("FIRSTNAME");
-
-                entity.Property(e => e.IsVerified).HasColumnName("IS-VERIFIED");
-
-                entity.Property(e => e.Lastname)
-                    .IsRequired()
-                    .HasMaxLength(30)
-                    .IsUnicode(false)
-                    .HasColumnName("LASTNAME");
-
-                entity.Property(e => e.Specialization)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("SPECIALIZATION");
-
-                entity.Property(e => e.TmsCreated)
-                    .HasColumnType("datetime")
-                    .HasColumnName("TMS-CREATED");
-
-                entity.Property(e => e.UserId).HasColumnName("USER-ID");
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -8,24 +8,24 @@ using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Model;
 
 namespace DatabaseAPI.Controllers {
-    [Route("tags")]
+    [Route("tag-validations")]
     [ApiController]
-    public class TagController : ControllerBase {
+    public class TagValidationController : ControllerBase {
         private readonly DHBWExpertsdatabaseContext _context;
 
         //The context is managed by the WEBAPI and used here via Dependency Injection.
-        public TagController(DHBWExpertsdatabaseContext context) {
+        public TagValidationController(DHBWExpertsdatabaseContext context) {
             _context = context;
         }
 
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
-        [HttpGet("{id:int}/validations", Name = "getValidationsByTagId")]
-        public async Task<ActionResult<IEnumerable<Object>>> getValidationsByTagId(int id) {
+        [HttpGet("{id:int}", Name = "getValidationByValId")]
+        public async Task<ActionResult<Object>> getValidationsByTagId(int id) {
 
             var query =
                 from val in _context.TagValidations
-                where val.Tag == id
+                where val.ValidationId == id
                 select new {
                     validationId = val.ValidationId,
                     tag = val.Tag,
@@ -34,7 +34,7 @@ namespace DatabaseAPI.Controllers {
                     tmsCreated = val.TmsCreated
                 };
 
-            var result = await query.ToListAsync();
+            var result = await query.FirstOrDefaultAsync();
 
             if (result is null) {
                 return NotFound();
@@ -44,40 +44,16 @@ namespace DatabaseAPI.Controllers {
 
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
-        [HttpGet("{id:int}", Name = "getTagByTagId")]
-        public async Task<ActionResult<IEnumerable<Object>>> getTagByTagId(int id) {
+        [HttpDelete("{id:int}", Name = "deleteTagValidationByTagId")]
+        public async Task<ActionResult> deleteTagValByValId(int id) {
 
-            var query =
-                from tags in _context.Tags
-                where tags.TagId == id
-                select new {
-                    tagId = tags.TagId,
-                    tag = tags.Tag1,
-                    user = tags.User,
-                    tmsCreated = tags.TmsCreated
-                };
+            var val = await _context.TagValidations.FindAsync(id);
 
-            var result = await query.ToListAsync();
-
-            if (result is null) {
-                return NotFound();
-            }
-            return result;
-        }
-
-
-        // GET: /Users/contacts/5
-        //The user assosiated contacts of the user a returned
-        [HttpDelete("{id:int}", Name = "deleteTagByTagId")]
-        public async Task<ActionResult> deleteTagByTagId(int id) {
-
-            var tag = await _context.Tags.FindAsync(id);
-
-            if (tag is null) {
+            if (val is null) {
                 return NotFound();
             }
 
-            _context.Tags.Remove(tag);
+            _context.TagValidations.Remove(val);
 
             try {
                 await _context.SaveChangesAsync();
