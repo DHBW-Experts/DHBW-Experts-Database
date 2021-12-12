@@ -36,7 +36,7 @@ namespace DatabaseAPI.Controllers {
                     specialization = user.Specialization,
                     email = user.EmailPrefix + "@" + loc.EmailDomain,
                     city = user.City,
-                    biographie = user.Bio,
+                    biography = user.Biography,
                     isVerified = user.IsVerified,
                     tmsCreated = user.TmsCreated
                 };
@@ -66,7 +66,7 @@ namespace DatabaseAPI.Controllers {
                     specialization = user.Specialization,
                     email = user.EmailPrefix + "@" + loc.EmailDomain,
                     city = user.City,
-                    biographie = user.Bio,
+                    biography = user.Biography,
                     isVerified = user.IsVerified,
                     tmsCreated = user.TmsCreated
                 };
@@ -99,7 +99,7 @@ namespace DatabaseAPI.Controllers {
                     specialization = user.Specialization,
                     email = user.EmailPrefix + "@" + loc.EmailDomain,
                     city = user.City,
-                    biographie = user.Bio,
+                    biography = user.Biography,
                     isVerified = user.IsVerified,
                     tmsCreated = user.TmsCreated
                 };
@@ -226,7 +226,7 @@ namespace DatabaseAPI.Controllers {
             Console.WriteLine("Course: " + editedUser.Course);
             Console.WriteLine("Specialization: " + editedUser.Specialization);
             Console.WriteLine("City: " + editedUser.City);
-            Console.WriteLine("Bio: " + editedUser.Bio);
+            Console.WriteLine("Bio: " + editedUser.Biography);
             Console.WriteLine("RfidId: " + editedUser.RfidId);
             Console.WriteLine("PwHash: " + editedUser.PwHash);
             Console.WriteLine("IsVerified: " + editedUser.IsVerified);
@@ -263,8 +263,8 @@ namespace DatabaseAPI.Controllers {
             if (editedUser.City != null) {
                 user.City = editedUser.CourseAbr;
             }
-            if (editedUser.Bio != null) {
-                user.Bio = editedUser.Bio;
+            if (editedUser.Biography != null) {
+                user.Biography = editedUser.Biography;
             }
             if (editedUser.RfidId != null) {
                 user.RfidId = editedUser.RfidId;

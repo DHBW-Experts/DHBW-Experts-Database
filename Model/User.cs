@@ -24,7 +24,7 @@ namespace DatabaseAPI.Model
         public string Specialization { get; set; }
         public string EmailPrefix { get; set; }
         public string City { get; set; }
-        public string Bio { get; set; }
+        public string Biography { get; set; }
         public string RfidId { get; set; }
         public string PwHash { get; set; }
         public bool IsVerified { get; set; }

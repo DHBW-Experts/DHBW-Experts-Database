@@ -40,7 +40,7 @@ namespace DatabaseAPI.Controllers {
                 specialization = user.Specialization,
                 email = user.EmailPrefix + "@" + (await _context.Dhbws.FindAsync(user.Dhbw)).EmailDomain,
                 city = user.City,
-                biographie = user.Bio,
+                biography = user.Biography,
                 isVerified = user.IsVerified,
                 tmsCreated = user.TmsCreated
             };

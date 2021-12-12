@@ -148,10 +148,10 @@ namespace DatabaseAPI.Model
 
                 entity.Property(e => e.UserId).HasColumnName("USER-ID");
 
-                entity.Property(e => e.Bio)
+                entity.Property(e => e.Biography)
                     .HasMaxLength(1000)
                     .IsUnicode(false)
-                    .HasColumnName("BIO");
+                    .HasColumnName("BIOGRAPHY");
 
                 entity.Property(e => e.City)
                     .HasMaxLength(30)

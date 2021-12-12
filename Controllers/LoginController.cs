@@ -37,7 +37,7 @@ namespace DatabaseAPI.Controllers {
                     specialization = user.Specialization,
                     email = text,
                     city = user.City,
-                    biographie = user.Bio,
+                    biography = user.Biography,
                     isVerified = user.IsVerified,
                     tmsCreated = user.TmsCreated
                 };
