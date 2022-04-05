@@ -47,7 +47,7 @@ namespace DatabaseAPI.Controllers {
                 select new {
                     userId = user.UserId,
                     firstName = user.Firstname,
-                    lastname = user.Lastname,
+                    lastName = user.Lastname,
                     dhbw = user.Dhbw,
                     course = user.Course,
                     courseAbr = user.CourseAbr,
