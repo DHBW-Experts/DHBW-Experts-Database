@@ -261,7 +261,7 @@ namespace DatabaseAPI.Controllers {
                 user.Specialization = editedUser.Specialization;
             }
             if (editedUser.City != null) {
-                user.City = editedUser.CourseAbr;
+                user.City = editedUser.City;
             }
             if (editedUser.Biography != null) {
                 user.Biography = editedUser.Biography;
