@@ -117,9 +117,9 @@ namespace DatabaseAPI.Model
                 entity.Property(e => e.ValidationId).HasColumnName("VALIDATION-ID");
 
                 entity.Property(e => e.Comment)
-                    .HasMaxLength(1000)
-                    .IsUnicode(false)
-                    .HasColumnName("COMMENT");
+                    .HasMaxLength(250)
+                    .HasColumnName("COMMENT")
+                    .UseCollation("Latin1_General_100_CI_AI_SC_UTF8");
 
                 entity.Property(e => e.Tag).HasColumnName("TAG");
 
@@ -154,7 +154,6 @@ namespace DatabaseAPI.Model
 
                 entity.Property(e => e.Biography)
                     .HasMaxLength(1000)
-                    .IsUnicode(false)
                     .HasColumnName("BIOGRAPHY")
                     .UseCollation("Latin1_General_100_CI_AI_SC_UTF8");
 

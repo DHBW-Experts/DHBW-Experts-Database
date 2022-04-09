@@ -1,4 +1,3 @@
-/*
 DELETE FROM [CONTACT]
 GO
 DELETE FROM [TAG-VALIDATION]
@@ -12,7 +11,7 @@ DBCC CHECKIDENT ('[USER]', RESEED, 999);
 GO
 DELETE FROM [DHBW]
 GO
-*/
+
 -----------------------------------
 INSERT INTO [DHBW] (
         [LOCATION],
@@ -30,6 +29,7 @@ INSERT INTO [USER] (
         [DHBW],
         [COURSE-ABR],
         [COURSE],
+        [SPECIALIZATION],
         [EMAIL-PREFIX],
         [CITY],
         [BIOGRAPHY],
@@ -42,10 +42,11 @@ INSERT INTO [USER] (
         'Mustermann', 
         'Karlsruhe', 
         'TINF20B2', 
-        'Informatik', 
+        'Informatik',
+        null,  
         'mustermann.max',
         'Ettlingen',
-        'Hello World',
+        N'Hello World',
         'EXAMPLE-HASH',
         1,
         123456
@@ -55,10 +56,11 @@ INSERT INTO [USER] (
         'Mustermann', 
         'Karlsruhe', 
         'TINF20B2', 
-        'Wirtschaftsinformatik', 
+        'Wirtschaftsinformatik',
+        'Sales and Consulting',   
         'mustermann.moritz',
         'Durlach',
-        'Hello World',
+        N'Hello World',
         'EXAMPLE-HASH',
         1,
         123456
@@ -68,10 +70,11 @@ INSERT INTO [USER] (
         'Mustermann', 
         'Karlsruhe', 
         'TINF20B2', 
-        'Elektrotechnik', 
+        'Elektrotechnik',
+        null,   
         'mustermann.erika',
         'Karlsruhe',
-        'Hello World',
+        N'Hello World',
         'EXAMPLE-HASH',
         1,
         123456
@@ -81,10 +84,11 @@ INSERT INTO [USER] (
         'Unverifiziert', 
         'Karlsruhe', 
         'TINF20B2', 
-        'Elektrotechnik', 
+        'BWL',
+        'Bank',   
         'unverifiziert.ulrich',
-        'Karlsruhe',
-        N'EMOJI 💩',
+        'Rheinstetten',
+        N'Emojis sind 🆒',
         'EXAMPLE-HASH',
         0,
         123456
@@ -102,6 +106,12 @@ INSERT INTO [TAG] ([TAG], [USER])
         ('TypeScript',  1002),
         ('NodeJS',      1002),
         ('SQL',         1002)
+GO
+---------------------------------
+INSERT INTO [TAG-VALIDATION] ([TAG], [VALIDATED-BY], [COMMENT])
+    VALUES 
+        (1000, 1001, N'Kann er wirklich, habs gesehen!'),
+        (1002, 1002, N'Hat in theoretischer Informatik eine 1.0 geschrieben 😯')
 GO
 ---------------------------------
 INSERT INTO [CONTACT] ([USER], [CONTACT])
