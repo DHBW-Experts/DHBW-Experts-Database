@@ -34,12 +34,6 @@ jobs:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
-      - name: Inject testdata into database
-        uses: Azure/sql-action@v1.2
-        with:
-          connection-string: ${{ secrets.DB_CONNECTION_STRING }}
-          sql-file: './Script/injectTestdata.sql'
-
   deploy:
     runs-on: windows-latest
     needs: build
