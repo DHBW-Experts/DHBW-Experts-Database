@@ -88,7 +88,7 @@ INSERT INTO [USER] (
         'Bank',   
         'unverifiziert.ulrich',
         'Rheinstetten',
-        N'Emojis sind 🆒',
+        N'Hello World',
         'EXAMPLE-HASH',
         0,
         123456
@@ -111,7 +111,7 @@ GO
 INSERT INTO [TAG-VALIDATION] ([TAG], [VALIDATED-BY], [COMMENT])
     VALUES 
         (1000, 1001, N'Kann er wirklich, habs gesehen!'),
-        (1002, 1002, N'Hat in theoretischer Informatik eine 1.0 geschrieben 😯')
+        (1002, 1002, N'Hat in theoretischer Informatik eine 1.0 geschrieben')
 GO
 ---------------------------------
 INSERT INTO [CONTACT] ([USER], [CONTACT])
