@@ -30,7 +30,7 @@ namespace DatabaseAPI.Model
             modelBuilder.Entity<Contact>(entity =>
             {
                 entity.HasKey(e => new { e.User, e.Contact1 })
-                    .HasName("CONTACT_PK");
+                    .HasName("CONTACT-UNIQUE-NO-DUPLICATE-CONTACTS");
 
                 entity.ToTable("CONTACT");
 
@@ -47,19 +47,19 @@ namespace DatabaseAPI.Model
                     .WithMany(p => p.ContactContact1Navigations)
                     .HasForeignKey(d => d.Contact1)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("CONTACT_FK-CONTACT");
+                    .HasConstraintName("CONTACT-FK-USER_CONTACT");
 
                 entity.HasOne(d => d.UserNavigation)
                     .WithMany(p => p.ContactUserNavigations)
                     .HasForeignKey(d => d.User)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("CONTACT_FK-USER");
+                    .HasConstraintName("CONTACT-FK-USER");
             });
 
             modelBuilder.Entity<Dhbw>(entity =>
             {
                 entity.HasKey(e => e.Location)
-                    .HasName("PK__DHBW__7B4298B47CB070B2");
+                    .HasName("DHBW-PK");
 
                 entity.ToTable("DHBW");
 
@@ -69,6 +69,7 @@ namespace DatabaseAPI.Model
                     .HasColumnName("LOCATION");
 
                 entity.Property(e => e.EmailDomain)
+                    .IsRequired()
                     .HasMaxLength(30)
                     .IsUnicode(false)
                     .HasColumnName("EMAIL-DOMAIN");
@@ -78,7 +79,7 @@ namespace DatabaseAPI.Model
             {
                 entity.ToTable("TAG");
 
-                entity.HasIndex(e => new { e.Tag1, e.User }, "ONE-TAG-PER-USER")
+                entity.HasIndex(e => new { e.Tag1, e.User }, "TAG-UNIQUE-NO-DUPLICATE-TAGS")
                     .IsUnique();
 
                 entity.Property(e => e.TagId).HasColumnName("TAG-ID");
@@ -99,17 +100,18 @@ namespace DatabaseAPI.Model
                 entity.HasOne(d => d.UserNavigation)
                     .WithMany(p => p.Tags)
                     .HasForeignKey(d => d.User)
-                    .HasConstraintName("TAG_FK-USER");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("TAG-FK-USER");
             });
 
             modelBuilder.Entity<TagValidation>(entity =>
             {
                 entity.HasKey(e => e.ValidationId)
-                    .HasName("TAG-VAL_PK");
+                    .HasName("TAG_VALIDATION-PK");
 
                 entity.ToTable("TAG-VALIDATION");
 
-                entity.HasIndex(e => new { e.ValidatedBy, e.Tag }, "ONE-VALIDATION-PER-TAG")
+                entity.HasIndex(e => new { e.Tag, e.ValidatedBy }, "TAG-VALIDATION-UNIQUE-NO-DUPLICATE-VALIDATIONS")
                     .IsUnique();
 
                 entity.Property(e => e.ValidationId).HasColumnName("VALIDATION-ID");
@@ -131,19 +133,21 @@ namespace DatabaseAPI.Model
                 entity.HasOne(d => d.TagNavigation)
                     .WithMany(p => p.TagValidations)
                     .HasForeignKey(d => d.Tag)
-                    .HasConstraintName("TAG-VAL_FK-TAG");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("TAG_VALIDATION-FK-TAG");
 
                 entity.HasOne(d => d.ValidatedByNavigation)
                     .WithMany(p => p.TagValidations)
                     .HasForeignKey(d => d.ValidatedBy)
-                    .HasConstraintName("TAG-VAL_FK-VALIDATED-BY");
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("TAG_VALIDATION-FK-USER");
             });
 
             modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("USER");
 
-                entity.HasIndex(e => new { e.Dhbw, e.EmailPrefix }, "USER_UNIQUE-EMAILS")
+                entity.HasIndex(e => new { e.EmailPrefix, e.Dhbw }, "USER-UNIQUE-NO-DUPLICATE-EMAILS")
                     .IsUnique();
 
                 entity.Property(e => e.UserId).HasColumnName("USER-ID");
@@ -151,7 +155,8 @@ namespace DatabaseAPI.Model
                 entity.Property(e => e.Biography)
                     .HasMaxLength(1000)
                     .IsUnicode(false)
-                    .HasColumnName("BIOGRAPHY");
+                    .HasColumnName("BIOGRAPHY")
+                    .UseCollation("Latin1_General_100_CI_AI_SC_UTF8");
 
                 entity.Property(e => e.City)
                     .HasMaxLength(30)
@@ -223,7 +228,7 @@ namespace DatabaseAPI.Model
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.Dhbw)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("USER_FK-DHBW");
+                    .HasConstraintName("USER-FK-DHBW");
             });
 
             OnModelCreatingPartial(modelBuilder);

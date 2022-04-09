@@ -14,7 +14,7 @@ namespace DatabaseAPI.Model
 
         public int TagId { get; set; }
         public string Tag1 { get; set; }
-        public int? User { get; set; }
+        public int User { get; set; }
         public DateTime? TmsCreated { get; set; }
 
         public virtual User UserNavigation { get; set; }

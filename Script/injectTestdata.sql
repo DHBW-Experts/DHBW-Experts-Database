@@ -1,3 +1,18 @@
+/*
+DELETE FROM [CONTACT]
+GO
+DELETE FROM [TAG-VALIDATION]
+DBCC CHECKIDENT ('[TAG-VALIDATION]', RESEED, 999);
+GO
+DELETE FROM [TAG]
+DBCC CHECKIDENT ('[TAG]', RESEED, 999);
+GO
+DELETE FROM [USER]
+DBCC CHECKIDENT ('[USER]', RESEED, 999);
+GO
+DELETE FROM [DHBW]
+GO
+*/
 -----------------------------------
 INSERT INTO [DHBW] (
         [LOCATION],
@@ -17,7 +32,7 @@ INSERT INTO [USER] (
         [COURSE],
         [EMAIL-PREFIX],
         [CITY],
-        [BIO],
+        [BIOGRAPHY],
         [PW-HASH],
         [IS-VERIFIED],
         [VERIFICATION-ID]
@@ -59,6 +74,19 @@ INSERT INTO [USER] (
         'Hello World',
         'EXAMPLE-HASH',
         1,
+        123456
+        ),
+        (
+        'Ulrich', 
+        'Unverifiziert', 
+        'Karlsruhe', 
+        'TINF20B2', 
+        'Elektrotechnik', 
+        'unverifiziert.ulrich',
+        'Karlsruhe',
+        N'EMOJI 💩',
+        'EXAMPLE-HASH',
+        0,
         123456
         )
 GO

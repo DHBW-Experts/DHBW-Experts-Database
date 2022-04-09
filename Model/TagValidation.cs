@@ -8,8 +8,8 @@ namespace DatabaseAPI.Model
     public partial class TagValidation
     {
         public int ValidationId { get; set; }
-        public int? Tag { get; set; }
-        public int? ValidatedBy { get; set; }
+        public int Tag { get; set; }
+        public int ValidatedBy { get; set; }
         public string Comment { get; set; }
         public DateTime? TmsCreated { get; set; }
 
