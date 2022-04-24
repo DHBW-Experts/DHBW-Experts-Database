@@ -8,6 +8,67 @@ DROP TABLE [USER]
 GO
 DROP TABLE [DHBW]
 GO
+
+DROP TABLE [AUTH0-USER-DATA]
+GO
+DROP TABLE [AUTH0-USER]
+GO
+DROP TABLE [AUTH0-DHBW]
+GO
+
+----------------------------------------------------------
+-- NEW USER TABLES
+----------------------------------------------------------
+
+-- Create DHBW-AUTH0 table
+CREATE TABLE "AUTH0-DHBW" (
+    "DOMAIN"        VARCHAR(30) NOT NULL,
+    "LOCATION"      VARCHAR(30) NOT NULL,
+
+    CONSTRAINT "AUTH0-DHBW-PK"
+        PRIMARY KEY ("DOMAIN")
+)
+GO
+
+-- Create USER-AUTH0 table
+CREATE TABLE "AUTH0-USER" (
+    "AUTH0-USER-ID"     CHAR(24),
+    "EMAIL-PREFIX"      VARCHAR(30) NOT NULL,
+    "EMAIL-DOMAIN"      VARCHAR(30) NOT NULL,
+    "REGISTERED"        BIT NOT NULL DEFAULT 0,
+    "VERIFIED"          BIT NOT NULL DEFAULT 0,
+    "CREATED_AT"        DATETIME NOT NULL
+
+    CONSTRAINT "AUTH0-USER-PK"
+        PRIMARY KEY ("AUTH0-USER-ID"),
+
+	CONSTRAINT "AUTH0-USER-FK-EMAIL-DOMAIN"
+        FOREIGN KEY ("EMAIL-DOMAIN") REFERENCES [AUTH0-DHBW]("DOMAIN"),
+
+	CONSTRAINT "AUTH0-USER-UNIQUE-NO-DUPLICATE-EMAILS"
+        UNIQUE ("EMAIL-PREFIX", "EMAIL-DOMAIN")
+)
+GO
+
+-- Create AUTH0-USER-DATA table
+CREATE TABLE "AUTH0-USER-DATA" (
+    "AUTH0-USER-ID"     CHAR(24),
+    "FIRSTNAME"         VARCHAR(30) NOT NULL,
+    "LASTNAME"          VARCHAR(30) NOT NULL,
+    "COURSE-ABR"        VARCHAR(15) NOT NULL,
+    "COURSE"            VARCHAR(30) NOT NULL,
+    "SPECIALIZATION"    VARCHAR(50),
+    "CITY"              VARCHAR(30),
+    "BIOGRAPHY"         NVARCHAR(1000) COLLATE Latin1_General_100_CI_AI_SC_UTF8,
+    "RFID-ID"           VARCHAR(30)
+
+	CONSTRAINT "AUTH0-USER-DATA-FK-ID"
+        FOREIGN KEY ("AUTH0-USER-ID") REFERENCES [AUTH0-USER]("AUTH0-USER-ID"),
+)
+GO
+
+----------------------------------------------------------
+-- OLD USER TABLES
 ----------------------------------------------------------
 
 -- Create DHBW table
@@ -48,6 +109,8 @@ CREATE TABLE "USER" (
         UNIQUE ("EMAIL-PREFIX", "DHBW")
 )
 GO
+
+----------------------------------------------------------
 
 -- Create TAG table
 CREATE TABLE "TAG" (

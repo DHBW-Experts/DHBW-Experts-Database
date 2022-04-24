@@ -17,6 +17,9 @@ namespace DatabaseAPI.Model
         {
         }
 
+        public virtual DbSet<Auth0Dhbw> Auth0Dhbws { get; set; }
+        public virtual DbSet<Auth0User> Auth0Users { get; set; }
+        public virtual DbSet<Auth0UserDatum> Auth0UserData { get; set; }
         public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Dhbw> Dhbws { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
@@ -26,6 +29,127 @@ namespace DatabaseAPI.Model
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
+
+            modelBuilder.Entity<Auth0Dhbw>(entity =>
+            {
+                entity.HasKey(e => e.Domain)
+                    .HasName("AUTH0-DHBW-PK");
+
+                entity.ToTable("AUTH0-DHBW");
+
+                entity.Property(e => e.Domain)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("DOMAIN");
+
+                entity.Property(e => e.Location)
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("LOCATION");
+            });
+
+            modelBuilder.Entity<Auth0User>(entity =>
+            {
+                entity.ToTable("AUTH0-USER");
+
+                entity.HasIndex(e => new { e.EmailPrefix, e.EmailDomain }, "AUTH0-USER-UNIQUE-NO-DUPLICATE-EMAILS")
+                    .IsUnique();
+
+                entity.Property(e => e.Auth0UserId)
+                    .HasMaxLength(24)
+                    .IsUnicode(false)
+                    .HasColumnName("AUTH0-USER-ID")
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CREATED_AT");
+
+                entity.Property(e => e.EmailDomain)
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("EMAIL-DOMAIN");
+
+                entity.Property(e => e.EmailPrefix)
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("EMAIL-PREFIX");
+
+                entity.Property(e => e.Registered).HasColumnName("REGISTERED");
+
+                entity.Property(e => e.Verified).HasColumnName("VERIFIED");
+
+                entity.HasOne(d => d.EmailDomainNavigation)
+                    .WithMany(p => p.Auth0Users)
+                    .HasForeignKey(d => d.EmailDomain)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("AUTH0-USER-FK-EMAIL-DOMAIN");
+            });
+
+            modelBuilder.Entity<Auth0UserDatum>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("AUTH0-USER-DATA");
+
+                entity.Property(e => e.Auth0UserId)
+                    .HasMaxLength(24)
+                    .IsUnicode(false)
+                    .HasColumnName("AUTH0-USER-ID")
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.Biography)
+                    .HasMaxLength(1000)
+                    .HasColumnName("BIOGRAPHY")
+                    .UseCollation("Latin1_General_100_CI_AI_SC_UTF8");
+
+                entity.Property(e => e.City)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("CITY");
+
+                entity.Property(e => e.Course)
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("COURSE");
+
+                entity.Property(e => e.CourseAbr)
+                    .IsRequired()
+                    .HasMaxLength(15)
+                    .IsUnicode(false)
+                    .HasColumnName("COURSE-ABR");
+
+                entity.Property(e => e.Firstname)
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("FIRSTNAME");
+
+                entity.Property(e => e.Lastname)
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("LASTNAME");
+
+                entity.Property(e => e.RfidId)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("RFID-ID");
+
+                entity.Property(e => e.Specialization)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("SPECIALIZATION");
+
+                entity.HasOne(d => d.Auth0User)
+                    .WithMany()
+                    .HasForeignKey(d => d.Auth0UserId)
+                    .HasConstraintName("AUTH0-USER-DATA-FK-ID");
+            });
 
             modelBuilder.Entity<Contact>(entity =>
             {
