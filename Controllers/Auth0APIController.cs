@@ -30,6 +30,10 @@ namespace DatabaseAPI.Controllers {
             user.EmailDomain = userIn.email.Split('@')[1];
             user.CreatedAt = userIn.createdAt;
 
+            Console.WriteLine(userIn.auth0UserId);
+            Console.WriteLine(userIn.email);
+            Console.WriteLine(userIn.createdAt);
+
             _context.Auth0User.Add(user);
 
             try {
