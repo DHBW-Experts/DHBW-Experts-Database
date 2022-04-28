@@ -16,8 +16,19 @@ namespace DatabaseAPI.Controllers {
             _context = context;
         }
 
+        public class UserObject {
+            public string auth0UserId { get; set; }
+            public string email { get; set; }
+            public DateTime createdAt { get; set; }
+        }
+
         [HttpPost("register")]
-        public async Task<IActionResult> register(Auth0User user) {
+        public async Task<IActionResult> register(UserObject userIn) {
+            Auth0User user = new Auth0User();
+            user.Auth0UserId = userIn.auth0UserId;
+            user.EmailPrefix = userIn.email.Split('@')[0];
+            user.EmailDomain = userIn.email.Split('@')[1];
+            user.CreatedAt = userIn.createdAt;
 
             _context.Auth0User.Add(user);
 
