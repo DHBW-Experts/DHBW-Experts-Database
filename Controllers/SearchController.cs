@@ -25,7 +25,7 @@ namespace DatabaseAPI.Controllers {
                 return Unauthorized();
             }
             var query =
-               from tags in _context.Tags
+               from tags in _context.Tag
                where tags.Tag1.Contains(text)
                select new {
                    tag = tags.Tag1
@@ -40,9 +40,9 @@ namespace DatabaseAPI.Controllers {
         [HttpGet("users/tags/{text}", Name = "getUsersByTag")]
         public async Task<ActionResult<IEnumerable<Object>>> GetUsersByTag(string text) {
             var query =
-                from user in _context.Users
-                join tags in _context.Tags on user.UserId equals tags.User
-                join loc in _context.Dhbws on user.Dhbw equals loc.Location
+                from user in _context.User
+                join tags in _context.Tag on user.UserId equals tags.User
+                join loc in _context.Dhbw on user.Dhbw equals loc.Location
                 where tags.Tag1.Contains(text)
                 select new {
                     userId = user.UserId,

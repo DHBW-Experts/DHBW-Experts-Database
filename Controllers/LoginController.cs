@@ -24,8 +24,8 @@ namespace DatabaseAPI.Controllers {
         public async Task<ActionResult<Object>> getUserByEmail(String text) {
 
             var query =
-                from user in _context.Users
-                join loc in _context.Dhbws on user.Dhbw equals loc.Location
+                from user in _context.User
+                join loc in _context.Dhbw on user.Dhbw equals loc.Location
                 where (user.EmailPrefix + "@" + loc.EmailDomain) == text
                 select new {
                     userId = user.UserId,

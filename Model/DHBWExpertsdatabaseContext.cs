@@ -17,14 +17,14 @@ namespace DatabaseAPI.Model
         {
         }
 
-        public virtual DbSet<Auth0Dhbw> Auth0Dhbws { get; set; }
-        public virtual DbSet<Auth0User> Auth0Users { get; set; }
-        public virtual DbSet<Auth0UserDatum> Auth0UserData { get; set; }
-        public virtual DbSet<Contact> Contacts { get; set; }
-        public virtual DbSet<Dhbw> Dhbws { get; set; }
-        public virtual DbSet<Tag> Tags { get; set; }
-        public virtual DbSet<TagValidation> TagValidations { get; set; }
-        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Auth0Dhbw> Auth0Dhbw { get; set; }
+        public virtual DbSet<Auth0User> Auth0User { get; set; }
+        public virtual DbSet<Auth0UserData> Auth0UserData { get; set; }
+        public virtual DbSet<Contact> Contact { get; set; }
+        public virtual DbSet<Dhbw> Dhbw { get; set; }
+        public virtual DbSet<Tag> Tag { get; set; }
+        public virtual DbSet<TagValidation> TagValidation { get; set; }
+        public virtual DbSet<User> User { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -78,18 +78,16 @@ namespace DatabaseAPI.Model
                     .IsUnicode(false)
                     .HasColumnName("EMAIL-PREFIX");
 
-                entity.Property(e => e.Registered).HasColumnName("REGISTERED");
-
                 entity.Property(e => e.Verified).HasColumnName("VERIFIED");
 
                 entity.HasOne(d => d.EmailDomainNavigation)
-                    .WithMany(p => p.Auth0Users)
+                    .WithMany(p => p.Auth0User)
                     .HasForeignKey(d => d.EmailDomain)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("AUTH0-USER-FK-EMAIL-DOMAIN");
             });
 
-            modelBuilder.Entity<Auth0UserDatum>(entity =>
+            modelBuilder.Entity<Auth0UserData>(entity =>
             {
                 entity.HasNoKey();
 
@@ -168,13 +166,13 @@ namespace DatabaseAPI.Model
                     .HasDefaultValueSql("(getdate())");
 
                 entity.HasOne(d => d.Contact1Navigation)
-                    .WithMany(p => p.ContactContact1Navigations)
+                    .WithMany(p => p.ContactContact1Navigation)
                     .HasForeignKey(d => d.Contact1)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("CONTACT-FK-USER_CONTACT");
 
                 entity.HasOne(d => d.UserNavigation)
-                    .WithMany(p => p.ContactUserNavigations)
+                    .WithMany(p => p.ContactUserNavigation)
                     .HasForeignKey(d => d.User)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("CONTACT-FK-USER");
@@ -222,7 +220,7 @@ namespace DatabaseAPI.Model
                 entity.Property(e => e.User).HasColumnName("USER");
 
                 entity.HasOne(d => d.UserNavigation)
-                    .WithMany(p => p.Tags)
+                    .WithMany(p => p.Tag)
                     .HasForeignKey(d => d.User)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("TAG-FK-USER");
@@ -255,13 +253,13 @@ namespace DatabaseAPI.Model
                 entity.Property(e => e.ValidatedBy).HasColumnName("VALIDATED-BY");
 
                 entity.HasOne(d => d.TagNavigation)
-                    .WithMany(p => p.TagValidations)
+                    .WithMany(p => p.TagValidation)
                     .HasForeignKey(d => d.Tag)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("TAG_VALIDATION-FK-TAG");
 
                 entity.HasOne(d => d.ValidatedByNavigation)
-                    .WithMany(p => p.TagValidations)
+                    .WithMany(p => p.TagValidation)
                     .HasForeignKey(d => d.ValidatedBy)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("TAG_VALIDATION-FK-USER");
@@ -348,7 +346,7 @@ namespace DatabaseAPI.Model
                 entity.Property(e => e.VerificationId).HasColumnName("VERIFICATION-ID");
 
                 entity.HasOne(d => d.DhbwNavigation)
-                    .WithMany(p => p.Users)
+                    .WithMany(p => p.User)
                     .HasForeignKey(d => d.Dhbw)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("USER-FK-DHBW");

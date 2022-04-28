@@ -10,7 +10,6 @@ namespace DatabaseAPI.Model
         public string Auth0UserId { get; set; }
         public string EmailPrefix { get; set; }
         public string EmailDomain { get; set; }
-        public bool Registered { get; set; }
         public bool Verified { get; set; }
         public DateTime CreatedAt { get; set; }
 

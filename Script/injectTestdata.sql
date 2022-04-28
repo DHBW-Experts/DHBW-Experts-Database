@@ -22,6 +22,17 @@ INSERT INTO [DHBW] (
         'student.dhbw-karlsruhe.de'
     )
 GO
+-----------------------------------
+INSERT INTO [AUTH0-DHBW] (
+        [DOMAIN],
+        [LOCATION]
+    )
+    VALUES (
+        
+        'student.dhbw-karlsruhe.de',
+        'Karlsruhe'
+    )
+GO
 -----------------------------------------
 INSERT INTO [USER] (
         [FIRSTNAME],

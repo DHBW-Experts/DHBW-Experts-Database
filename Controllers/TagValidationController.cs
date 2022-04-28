@@ -24,7 +24,7 @@ namespace DatabaseAPI.Controllers {
         public async Task<ActionResult<Object>> getValidationsByTagId(int id) {
 
             var query =
-                from val in _context.TagValidations
+                from val in _context.TagValidation
                 where val.ValidationId == id
                 select new {
                     validationId = val.ValidationId,
@@ -47,13 +47,13 @@ namespace DatabaseAPI.Controllers {
         [HttpDelete("{id:int}", Name = "deleteTagValidationByTagId")]
         public async Task<ActionResult> deleteTagValByValId(int id) {
 
-            var val = await _context.TagValidations.FindAsync(id);
+            var val = await _context.TagValidation.FindAsync(id);
 
             if (val is null) {
                 return NotFound();
             }
 
-            _context.TagValidations.Remove(val);
+            _context.TagValidation.Remove(val);
 
             try {
                 await _context.SaveChangesAsync();

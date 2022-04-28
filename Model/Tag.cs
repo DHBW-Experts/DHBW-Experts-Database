@@ -9,7 +9,7 @@ namespace DatabaseAPI.Model
     {
         public Tag()
         {
-            TagValidations = new HashSet<TagValidation>();
+            TagValidation = new HashSet<TagValidation>();
         }
 
         public int TagId { get; set; }
@@ -18,6 +18,6 @@ namespace DatabaseAPI.Model
         public DateTime? TmsCreated { get; set; }
 
         public virtual User UserNavigation { get; set; }
-        public virtual ICollection<TagValidation> TagValidations { get; set; }
+        public virtual ICollection<TagValidation> TagValidation { get; set; }
     }
 }

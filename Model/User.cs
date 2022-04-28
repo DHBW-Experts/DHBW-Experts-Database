@@ -9,10 +9,10 @@ namespace DatabaseAPI.Model
     {
         public User()
         {
-            ContactContact1Navigations = new HashSet<Contact>();
-            ContactUserNavigations = new HashSet<Contact>();
-            TagValidations = new HashSet<TagValidation>();
-            Tags = new HashSet<Tag>();
+            ContactContact1Navigation = new HashSet<Contact>();
+            ContactUserNavigation = new HashSet<Contact>();
+            Tag = new HashSet<Tag>();
+            TagValidation = new HashSet<TagValidation>();
         }
 
         public int UserId { get; set; }
@@ -32,9 +32,9 @@ namespace DatabaseAPI.Model
         public DateTime? TmsCreated { get; set; }
 
         public virtual Dhbw DhbwNavigation { get; set; }
-        public virtual ICollection<Contact> ContactContact1Navigations { get; set; }
-        public virtual ICollection<Contact> ContactUserNavigations { get; set; }
-        public virtual ICollection<TagValidation> TagValidations { get; set; }
-        public virtual ICollection<Tag> Tags { get; set; }
+        public virtual ICollection<Contact> ContactContact1Navigation { get; set; }
+        public virtual ICollection<Contact> ContactUserNavigation { get; set; }
+        public virtual ICollection<Tag> Tag { get; set; }
+        public virtual ICollection<TagValidation> TagValidation { get; set; }
     }
 }

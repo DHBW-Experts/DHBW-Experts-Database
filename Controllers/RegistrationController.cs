@@ -22,7 +22,7 @@ namespace DatabaseAPI.Controllers {
                 return Conflict("Data provided will be set automaticly");
             }
             user.VerificationId = Functions.generateVerificationCode();
-            _context.Users.Add(user);
+            _context.User.Add(user);
 
             try {
                 await _context.SaveChangesAsync();
@@ -38,7 +38,7 @@ namespace DatabaseAPI.Controllers {
                 course = user.Course,
                 courseAbr = user.CourseAbr,
                 specialization = user.Specialization,
-                email = user.EmailPrefix + "@" + (await _context.Dhbws.FindAsync(user.Dhbw)).EmailDomain,
+                email = user.EmailPrefix + "@" + (await _context.Dhbw.FindAsync(user.Dhbw)).EmailDomain,
                 city = user.City,
                 biography = user.Biography,
                 isVerified = user.IsVerified,
@@ -50,14 +50,14 @@ namespace DatabaseAPI.Controllers {
 
         [HttpPut("{userId:int}/{verificationId:int}")]
         public async Task<IActionResult> verify(int userId, int verificationId) {
-            User toBeVerified = await _context.Users.FindAsync(userId);
+            User toBeVerified = await _context.User.FindAsync(userId);
             if (toBeVerified is not null && !toBeVerified.IsVerified) {
                 int expectedID = toBeVerified.VerificationId;
 
                 if (verificationId == expectedID) {
                     toBeVerified.IsVerified = true;
 
-                    _context.Users.Update(toBeVerified);
+                    _context.User.Update(toBeVerified);
 
                     try {
                         await _context.SaveChangesAsync();

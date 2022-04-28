@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace DatabaseAPI.Model
 {
-    public partial class Auth0UserDatum
+    public partial class Auth0UserData
     {
         public string Auth0UserId { get; set; }
         public string Firstname { get; set; }

@@ -19,7 +19,7 @@ namespace DatabaseAPI.Controllers {
         [HttpPost("register")]
         public async Task<IActionResult> register(Auth0User user) {
 
-            _context.Auth0Users.Add(user);
+            _context.Auth0User.Add(user);
 
             try {
                 await _context.SaveChangesAsync();

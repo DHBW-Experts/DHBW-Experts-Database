@@ -9,12 +9,12 @@ namespace DatabaseAPI.Model
     {
         public Auth0Dhbw()
         {
-            Auth0Users = new HashSet<Auth0User>();
+            Auth0User = new HashSet<Auth0User>();
         }
 
         public string Domain { get; set; }
         public string Location { get; set; }
 
-        public virtual ICollection<Auth0User> Auth0Users { get; set; }
+        public virtual ICollection<Auth0User> Auth0User { get; set; }
     }
 }

@@ -9,12 +9,12 @@ namespace DatabaseAPI.Model
     {
         public Dhbw()
         {
-            Users = new HashSet<User>();
+            User = new HashSet<User>();
         }
 
         public string Location { get; set; }
         public string EmailDomain { get; set; }
 
-        public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<User> User { get; set; }
     }
 }
