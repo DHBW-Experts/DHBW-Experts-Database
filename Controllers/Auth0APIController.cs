@@ -19,7 +19,6 @@ namespace DatabaseAPI.Controllers {
         public class UserObject {
             public string auth0UserId { get; set; }
             public string email { get; set; }
-            public DateTime createdAt { get; set; }
         }
 
         [HttpPost("register")]
@@ -28,11 +27,6 @@ namespace DatabaseAPI.Controllers {
             user.Auth0UserId = userIn.auth0UserId;
             user.EmailPrefix = userIn.email.Split('@')[0];
             user.EmailDomain = userIn.email.Split('@')[1];
-            user.CreatedAt = userIn.createdAt;
-
-            Console.WriteLine(userIn.auth0UserId);
-            Console.WriteLine(userIn.email);
-            Console.WriteLine(userIn.createdAt);
 
             _context.Auth0User.Add(user);
 
