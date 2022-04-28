@@ -31,6 +31,11 @@ INSERT INTO [AUTH0-DHBW] (
         
         'student.dhbw-karlsruhe.de',
         'Karlsruhe'
+    ),
+    (
+        
+        'example.com',
+        'Karlsruhe'
     )
 GO
 -----------------------------------------

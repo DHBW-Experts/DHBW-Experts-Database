@@ -64,7 +64,8 @@ namespace DatabaseAPI.Model
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnType("datetime")
-                    .HasColumnName("CREATED_AT");
+                    .HasColumnName("CREATED_AT")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.EmailDomain)
                     .IsRequired()

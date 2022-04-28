@@ -11,7 +11,7 @@ namespace DatabaseAPI.Model
         public string EmailPrefix { get; set; }
         public string EmailDomain { get; set; }
         public bool Verified { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
         public virtual Auth0Dhbw EmailDomainNavigation { get; set; }
     }
