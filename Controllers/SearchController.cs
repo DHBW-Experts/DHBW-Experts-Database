@@ -21,9 +21,6 @@ namespace DatabaseAPI.Controllers {
         // GET: /Search/Tags/LaTeX
         [HttpGet("tags/{text}", Name = "getTagsByText")]
         public async Task<ActionResult<Object>> getTagsByText(string text) {
-            if (!Functions.authenticate(_context, 0, "")) {
-                return Unauthorized();
-            }
             var query =
                from tags in _context.Tag
                where tags.Tag1.Contains(text)

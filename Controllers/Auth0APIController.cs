@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DatabaseAPI.Controllers {
     [Route("auth0")]
@@ -42,8 +43,9 @@ namespace DatabaseAPI.Controllers {
         public class DomainObject {
             public string domain { get; set; }
         }
-
+        
         [HttpGet("checkdomain")]
+        [Authorize("auth0-api")]
         public async Task<Object> isDomainValid([FromBody]DomainObject domainObject) {
 
             var query =
