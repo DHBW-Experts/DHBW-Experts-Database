@@ -23,6 +23,7 @@ namespace DatabaseAPI.Controllers {
         }
 
         [HttpPost("register")]
+        [Authorize("auth0-api")]
         public async Task<IActionResult> register(UserObject userIn) {
             Auth0User user = new Auth0User();
             user.Auth0UserId = userIn.auth0UserId;
