@@ -16,6 +16,7 @@ namespace DatabaseAPI.Model
         public string Course { get; set; }
         public string Specialization { get; set; }
         public string City { get; set; }
+        public string Biography { get; set; }
         public bool? Registered { get; set; }
         public DateTime? CreatedAt { get; set; }
     }

@@ -48,13 +48,13 @@ namespace DatabaseAPI.Controllers {
         public async Task<ActionResult<IEnumerable<Object>>> getTagByTagId(int id) {
 
             var query =
-                from tags in _context.Tag
+                from tags in _context.Auth0Tags
                 where tags.TagId == id
                 select new {
                     tagId = tags.TagId,
-                    tag = tags.Tag1,
+                    tag = tags.Tag,
                     user = tags.User,
-                    tmsCreated = tags.TmsCreated
+                    createdAt = tags.CreatedAt
                 };
 
             var result = await query.ToListAsync();
@@ -63,29 +63,6 @@ namespace DatabaseAPI.Controllers {
                 return NotFound();
             }
             return result;
-        }
-
-
-        // GET: /Users/contacts/5
-        //The user assosiated contacts of the user a returned
-        [HttpDelete("{id:int}", Name = "deleteTagByTagId")]
-        public async Task<ActionResult> deleteTagByTagId(int id) {
-
-            var tag = await _context.Tag.FindAsync(id);
-
-            if (tag is null) {
-                return NotFound();
-            }
-
-            _context.Tag.Remove(tag);
-
-            try {
-                await _context.SaveChangesAsync();
-            } catch (DbUpdateException) {
-                return Conflict();
-            }
-
-            return Ok();
         }
 
     }

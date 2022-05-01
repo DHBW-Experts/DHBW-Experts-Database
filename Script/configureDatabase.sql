@@ -56,7 +56,10 @@ CREATE TABLE "AUTH0_user_data" (
     "biography"         NVARCHAR(1000) COLLATE Latin1_General_100_CI_AI_SC_UTF8,
     "rfid_id"           VARCHAR(30)
 
-	CONSTRAINT "FK_user_data_user_id"
+	CONSTRAINT "PK_user-data"
+        PRIMARY KEY ("user"),
+
+    CONSTRAINT "FK_user_data_user_id"
         FOREIGN KEY ("user") REFERENCES [AUTH0_users]("user_id"),
 )
 GO
@@ -72,7 +75,7 @@ CREATE TABLE "AUTH0_tags" (
         PRIMARY KEY ("tag_id"),
 
 	CONSTRAINT "FK_tags-user_id"
-        FOREIGN KEY ("user") REFERENCES [AUTH0_users]("user_id"),
+        FOREIGN KEY ("user") REFERENCES [AUTH0_user_data]("user"),
 
     CONSTRAINT "UQ_tags_no_duplicate_tags" 
         UNIQUE ("tag", "user")
@@ -94,7 +97,7 @@ CREATE TABLE "AUTH0_tag_validations" (
         FOREIGN KEY ("tag") REFERENCES [AUTH0_tags]("tag_id"),
 
 	CONSTRAINT "FK_tag_validations_validated_by"
-        FOREIGN KEY ("validated_by") REFERENCES [AUTH0_users]("user_id"),
+        FOREIGN KEY ("validated_by") REFERENCES [AUTH0_user_data]("user"),
 
     CONSTRAINT "UQ_tag_validations_no_duplicate_validations" 
         UNIQUE ("tag", "validated_by")
@@ -108,10 +111,10 @@ CREATE TABLE "AUTH0_contacts" (
     "created_at"    DATETIME DEFAULT CURRENT_TIMESTAMP
 
 	CONSTRAINT "FK_contacts_user"
-        FOREIGN KEY ("user") REFERENCES [AUTH0_users]("user_id"),
+        FOREIGN KEY ("user") REFERENCES [AUTH0_user_data]("user"),
 
 	CONSTRAINT "FK_contacts_contact"
-        FOREIGN KEY ("contact") REFERENCES [AUTH0_users]("user_id"),
+        FOREIGN KEY ("contact") REFERENCES [AUTH0_user_data]("user"),
 
     CONSTRAINT "UQ_contacts_no_duplicate_contacts"
         PRIMARY KEY ("user", "contact")
@@ -130,6 +133,7 @@ CREATE VIEW [vw_users] AS
 	    [course],
 	    [specialization],
 	    [city],
+        [biography],
 	    CAST((SELECT CASE WHEN EXISTS(SELECT * FROM [AUTH0_user_data] WHERE [user] = [user_id]) THEN 1 ELSE 0 END) AS BIT) AS registered,
 	    [created_at]
     FROM [AUTH0_users]

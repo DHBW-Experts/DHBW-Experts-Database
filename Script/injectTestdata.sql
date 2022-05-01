@@ -95,7 +95,7 @@ INSERT INTO [AUTH0_user_data] (
         null,
         'Ettlingen',
         N'Hello World',
-        123456
+        '1A'
         ),
         (
         '626db6676c48dc006a2dcb17',
@@ -106,7 +106,7 @@ INSERT INTO [AUTH0_user_data] (
         'Sales and Consulting',
         'Durlach',
         N'Hello World',
-        123456
+        '2B'
         ),
         (
         '626db6963b37a6006f7a7174',
@@ -117,7 +117,7 @@ INSERT INTO [AUTH0_user_data] (
         null,
         'Karlsruhe',
         N'Hello World',
-        123456
+        '3C'
         )
 GO
 --------------------------------

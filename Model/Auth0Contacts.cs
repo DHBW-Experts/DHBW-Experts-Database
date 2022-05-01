@@ -11,7 +11,7 @@ namespace DatabaseAPI.Model
         public string Contact { get; set; }
         public DateTime? CreatedAt { get; set; }
 
-        public virtual Auth0Users ContactNavigation { get; set; }
-        public virtual Auth0Users UserNavigation { get; set; }
+        public virtual Auth0UserData ContactNavigation { get; set; }
+        public virtual Auth0UserData UserNavigation { get; set; }
     }
 }

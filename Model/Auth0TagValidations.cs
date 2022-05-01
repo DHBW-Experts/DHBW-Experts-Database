@@ -14,6 +14,6 @@ namespace DatabaseAPI.Model
         public DateTime? CreatedAt { get; set; }
 
         public virtual Auth0Tags TagNavigation { get; set; }
-        public virtual Auth0Users ValidatedByNavigation { get; set; }
+        public virtual Auth0UserData ValidatedByNavigation { get; set; }
     }
 }

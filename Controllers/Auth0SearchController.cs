@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Model;
 
 namespace DatabaseAPI.Controllers {
-    [Route("search")]
+    [Route("auth0-search")]
     [ApiController]
     public class Auth0SearchController : ControllerBase {
         private readonly DHBWExpertsdatabaseContext _context;
@@ -22,13 +22,13 @@ namespace DatabaseAPI.Controllers {
         [HttpGet("tags/{text}", Name = "getTagsByText")]
         public async Task<ActionResult<Object>> getTagsByText(string text) {
             var query =
-               from tags in _context.Tag
-               where tags.Tag1.Contains(text)
+               from tags in _context.Auth0Tags
+               where tags.Tag.Contains(text)
                select new {
-                   tag = tags.Tag1
+                   tag = tags.Tag
                };
 
-            var result = await query.Distinct().ToListAsync();
+            var result = await query.Distinct().Take(25).ToListAsync();
 
             return result;
         }
@@ -37,24 +37,10 @@ namespace DatabaseAPI.Controllers {
         [HttpGet("users/tags/{text}", Name = "getUsersByTag")]
         public async Task<ActionResult<IEnumerable<Object>>> GetUsersByTag(string text) {
             var query =
-                from user in _context.User
-                join tags in _context.Tag on user.UserId equals tags.User
-                join loc in _context.Dhbw on user.Dhbw equals loc.Location
-                where tags.Tag1.Contains(text)
-                select new {
-                    userId = user.UserId,
-                    firstName = user.Firstname,
-                    lastName = user.Lastname,
-                    dhbw = user.Dhbw,
-                    course = user.Course,
-                    courseAbr = user.CourseAbr,
-                    specialization = user.Specialization,
-                    email = user.EmailPrefix + "@" + loc.EmailDomain,
-                    city = user.City,
-                    biography = user.Biography,
-                    isVerified = user.IsVerified,
-                    tmsCreated = user.TmsCreated
-                };
+                from user in _context.VwUsers
+                join tags in _context.Auth0Tags on user.UserId equals tags.User
+                where tags.Tag.Contains(text)
+                select user;
 
             var result = await query.Distinct().Take(25).ToListAsync();
 

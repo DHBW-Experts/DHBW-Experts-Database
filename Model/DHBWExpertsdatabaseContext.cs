@@ -173,9 +173,16 @@ namespace DatabaseAPI.Model
 
             modelBuilder.Entity<Auth0UserData>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.User)
+                    .HasName("PK_user-data");
 
                 entity.ToTable("AUTH0_user_data");
+
+                entity.Property(e => e.User)
+                    .HasMaxLength(24)
+                    .IsUnicode(false)
+                    .HasColumnName("user")
+                    .IsFixedLength(true);
 
                 entity.Property(e => e.Biography)
                     .HasMaxLength(1000)
@@ -221,15 +228,10 @@ namespace DatabaseAPI.Model
                     .IsUnicode(false)
                     .HasColumnName("specialization");
 
-                entity.Property(e => e.User)
-                    .HasMaxLength(24)
-                    .IsUnicode(false)
-                    .HasColumnName("user")
-                    .IsFixedLength(true);
-
                 entity.HasOne(d => d.UserNavigation)
-                    .WithMany()
-                    .HasForeignKey(d => d.User)
+                    .WithOne(p => p.Auth0UserData)
+                    .HasForeignKey<Auth0UserData>(d => d.User)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_user_data_user_id");
             });
 
@@ -481,6 +483,11 @@ namespace DatabaseAPI.Model
                 entity.HasNoKey();
 
                 entity.ToView("vw_users");
+
+                entity.Property(e => e.Biography)
+                    .HasMaxLength(1000)
+                    .HasColumnName("biography")
+                    .UseCollation("Latin1_General_100_CI_AI_SC_UTF8");
 
                 entity.Property(e => e.City)
                     .HasMaxLength(30)
