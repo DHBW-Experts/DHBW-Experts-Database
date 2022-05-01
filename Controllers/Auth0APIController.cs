@@ -25,12 +25,12 @@ namespace DatabaseAPI.Controllers {
         [HttpPost("register")]
         [Authorize("auth0-api")]
         public async Task<IActionResult> register(UserObject userIn) {
-            Auth0User user = new Auth0User();
-            user.Auth0UserId = userIn.auth0UserId;
+            Auth0Users user = new Auth0Users();
+            user.UserId = userIn.auth0UserId;
             user.EmailPrefix = userIn.email.Split('@')[0];
             user.EmailDomain = userIn.email.Split('@')[1];
 
-            _context.Auth0User.Add(user);
+            _context.Auth0Users.Add(user);
 
             try {
                 await _context.SaveChangesAsync();
@@ -50,7 +50,7 @@ namespace DatabaseAPI.Controllers {
         public async Task<Object> isDomainValid([FromBody]DomainObject domainObject) {
 
             var query =
-                from dhbw in _context.Auth0Dhbw
+                from dhbw in _context.Auth0DhbwDomains
                 where dhbw.Domain == domainObject.domain
                 select dhbw;
 

@@ -17,7 +17,7 @@ namespace DatabaseAPI.Controllers {
         }
 
         [HttpPost]
-        public async Task<IActionResult> register(User user) {
+        public async Task<IActionResult> registerOld(User user) {
             if (user.VerificationId != 0 || user.UserId != 0 || user.IsVerified != false) {
                 return Conflict("Data provided will be set automaticly");
             }
@@ -45,11 +45,11 @@ namespace DatabaseAPI.Controllers {
                 tmsCreated = user.TmsCreated
             };
 
-            return CreatedAtRoute("getUserById", new { id = user.UserId }, result);
+            return CreatedAtRoute("getUserByIdOld", new { id = user.UserId }, result);
         }
 
         [HttpPut("{userId:int}/{verificationId:int}")]
-        public async Task<IActionResult> verify(int userId, int verificationId) {
+        public async Task<IActionResult> verifyOld(int userId, int verificationId) {
             User toBeVerified = await _context.User.FindAsync(userId);
             if (toBeVerified is not null && !toBeVerified.IsVerified) {
                 int expectedID = toBeVerified.VerificationId;

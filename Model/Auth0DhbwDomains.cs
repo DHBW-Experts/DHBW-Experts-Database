@@ -5,16 +5,16 @@ using System.Collections.Generic;
 
 namespace DatabaseAPI.Model
 {
-    public partial class Auth0Dhbw
+    public partial class Auth0DhbwDomains
     {
-        public Auth0Dhbw()
+        public Auth0DhbwDomains()
         {
-            Auth0User = new HashSet<Auth0User>();
+            Auth0Users = new HashSet<Auth0Users>();
         }
 
         public string Domain { get; set; }
         public string Location { get; set; }
 
-        public virtual ICollection<Auth0User> Auth0User { get; set; }
+        public virtual ICollection<Auth0Users> Auth0Users { get; set; }
     }
 }

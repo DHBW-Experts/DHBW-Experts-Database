@@ -20,8 +20,8 @@ namespace DatabaseAPI.Controllers {
 
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
-        [HttpGet("{id:int}", Name = "getValidationByValId")]
-        public async Task<ActionResult<Object>> getValidationsByTagId(int id) {
+        [HttpGet("{id:int}", Name = "getValidationByValIdOld")]
+        public async Task<ActionResult<Object>> getValidationsByTagIdOld(int id) {
 
             var query =
                 from val in _context.TagValidation
@@ -44,8 +44,8 @@ namespace DatabaseAPI.Controllers {
 
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
-        [HttpDelete("{id:int}", Name = "deleteTagValidationByTagId")]
-        public async Task<ActionResult> deleteTagValByValId(int id) {
+        [HttpDelete("{id:int}", Name = "deleteTagValidationByTagIdOld")]
+        public async Task<ActionResult> deleteTagValByValIdOld(int id) {
 
             var val = await _context.TagValidation.FindAsync(id);
 

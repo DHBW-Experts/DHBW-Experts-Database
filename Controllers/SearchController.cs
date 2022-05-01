@@ -19,8 +19,8 @@ namespace DatabaseAPI.Controllers {
         }
 
         // GET: /Search/Tags/LaTeX
-        [HttpGet("tags/{text}", Name = "getTagsByText")]
-        public async Task<ActionResult<Object>> getTagsByText(string text) {
+        [HttpGet("tags/{text}", Name = "getTagsByTextOld")]
+        public async Task<ActionResult<Object>> getTagsByTextOld(string text) {
             var query =
                from tags in _context.Tag
                where tags.Tag1.Contains(text)
@@ -34,8 +34,8 @@ namespace DatabaseAPI.Controllers {
         }
 
         // GET: /Search/Tags/LaTeX
-        [HttpGet("users/tags/{text}", Name = "getUsersByTag")]
-        public async Task<ActionResult<IEnumerable<Object>>> GetUsersByTag(string text) {
+        [HttpGet("users/tags/{text}", Name = "getUsersByTagOld")]
+        public async Task<ActionResult<IEnumerable<Object>>> GetUsersByTagOld(string text) {
             var query =
                 from user in _context.User
                 join tags in _context.Tag on user.UserId equals tags.User

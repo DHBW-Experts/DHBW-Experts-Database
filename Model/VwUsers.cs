@@ -5,18 +5,18 @@ using System.Collections.Generic;
 
 namespace DatabaseAPI.Model
 {
-    public partial class Auth0UserData
+    public partial class VwUsers
     {
-        public string User { get; set; }
+        public string UserId { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
+        public string Email { get; set; }
+        public string DhbwLocation { get; set; }
         public string CourseAbbr { get; set; }
         public string Course { get; set; }
         public string Specialization { get; set; }
         public string City { get; set; }
-        public string Biography { get; set; }
-        public string RfidId { get; set; }
-
-        public virtual Auth0Users UserNavigation { get; set; }
+        public bool? Registered { get; set; }
+        public DateTime? CreatedAt { get; set; }
     }
 }

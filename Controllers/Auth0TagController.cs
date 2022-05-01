@@ -8,20 +8,20 @@ using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Model;
 
 namespace DatabaseAPI.Controllers {
-    [Route("tags")]
+    [Route("auth0-tags")]
     [ApiController]
-    public class TagController : ControllerBase {
+    public class Auth0TagController : ControllerBase {
         private readonly DHBWExpertsdatabaseContext _context;
 
         //The context is managed by the WEBAPI and used here via Dependency Injection.
-        public TagController(DHBWExpertsdatabaseContext context) {
+        public Auth0TagController(DHBWExpertsdatabaseContext context) {
             _context = context;
         }
 
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
-        [HttpGet("{id:int}/validations", Name = "getValidationsByTagIdOld")]
-        public async Task<ActionResult<IEnumerable<Object>>> getValidationsByTagIdOld(int id) {
+        [HttpGet("{id:int}/validations", Name = "getValidationsByTagId")]
+        public async Task<ActionResult<IEnumerable<Object>>> getValidationsByTagId(int id) {
 
             var query =
                 from val in _context.TagValidation
@@ -44,8 +44,8 @@ namespace DatabaseAPI.Controllers {
 
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
-        [HttpGet("{id:int}", Name = "getTagByTagIdOld")]
-        public async Task<ActionResult<IEnumerable<Object>>> getTagByTagIdOld(int id) {
+        [HttpGet("{id:int}", Name = "getTagByTagId")]
+        public async Task<ActionResult<IEnumerable<Object>>> getTagByTagId(int id) {
 
             var query =
                 from tags in _context.Tag
@@ -68,8 +68,8 @@ namespace DatabaseAPI.Controllers {
 
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
-        [HttpDelete("{id:int}", Name = "deleteTagByTagIdOld")]
-        public async Task<ActionResult> deleteTagByTagIdOld(int id) {
+        [HttpDelete("{id:int}", Name = "deleteTagByTagId")]
+        public async Task<ActionResult> deleteTagByTagId(int id) {
 
             var tag = await _context.Tag.FindAsync(id);
 
