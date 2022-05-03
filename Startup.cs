@@ -7,10 +7,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Xml;
 using System;
+using System.Threading.Tasks;
 using DatabaseAPI.Authentication;
 using DatabaseAPI.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.OpenApi.Models;
 
 namespace DatabaseAPI
 {
@@ -54,6 +56,13 @@ namespace DatabaseAPI
                 options.AddPolicy("auth0-api", policy => policy.Requirements.Add(new HasScopeRequirement("auth0-api", "https://dhbw-experts.eu.auth0.com/")));
             });
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+            
+            services.AddSwaggerGen(swagger =>
+            {
+                swagger.SwaggerDoc("v1", new OpenApiInfo { Title = "DHBW-Experts API" });
+            });
+            services.AddSwaggerGenNewtonsoftSupport();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,6 +84,23 @@ namespace DatabaseAPI
 
             app.UseAuthentication();
             app.UseAuthorization();
+            
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "DHBW-Experts API");
+            });
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapGet("/", context =>
+                {
+                    context.Response.Redirect("swagger/index.html", permanent: true);
+                    return Task.CompletedTask;
+                });
+
+                endpoints.MapControllers();
+            });
             
             app.UseMvc(routes =>
                 {

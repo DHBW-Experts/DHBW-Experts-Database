@@ -8,13 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Model;
 
 namespace DatabaseAPI.Controllers {
-    [Route("login")]
+    [Route("old/login")]
     [ApiController]
-    public class LoginController : ControllerBase {
+    public class OldLoginController : ControllerBase {
         private readonly DHBWExpertsdatabaseContext _context;
 
         //The context is managed by the WEBAPI and used here via Dependency Injection.
-        public LoginController(DHBWExpertsdatabaseContext context) {
+        public OldLoginController(DHBWExpertsdatabaseContext context) {
             _context = context;
         }
 

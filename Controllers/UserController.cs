@@ -18,29 +18,14 @@ namespace DatabaseAPI.Controllers {
             _context = context;
         }
 
-        // GET: /Users/5
+        // GET: /Users/626db5fc4105f20069997435
         //The user assosiated with the specified ID is returned, if found.
-        [HttpGet("{id:int}", Name = "getUserByIdOld")]
-        public async Task<ActionResult<Object>> getUserByIdOld(int id) {
+        [HttpGet("{id}", Name = "getUserById")]
+        public async Task<ActionResult<Object>> getUserById(string id) {
             var query =
-                from user in _context.User
-                join loc in _context.Dhbw on user.Dhbw equals loc.Location
+                from user in _context.VwUsers
                 where user.UserId == id
-                select new {
-                    userId = id,
-                    firstName = user.Firstname,
-                    lastName = user.Lastname,
-                    dhbw = user.Dhbw,
-                    course = user.Course,
-                    courseAbr = user.CourseAbr,
-                    specialization = user.Specialization,
-                    email = user.EmailPrefix + "@" + loc.EmailDomain,
-                    city = user.City,
-                    biography = user.Biography,
-                    isVerified = user.IsVerified,
-                    tmsCreated = user.TmsCreated
-                };
-
+                select user;
 
             var result = await query.FirstOrDefaultAsync();
             if (result is null) {
@@ -51,26 +36,12 @@ namespace DatabaseAPI.Controllers {
 
         //GET: /Users/rfid/432a9e7b626c87f
         [HttpGet("rfid/{rfidId}")]
-        public async Task<ActionResult<Object>> getUserOld(string rfidId) {
+        public async Task<ActionResult<Object>> getUserByRfidId(string rfidId) {
             var query =
-                from user in _context.User
-                join loc in _context.Dhbw on user.Dhbw equals loc.Location
-                where user.RfidId == rfidId
-                select new {
-                    userId = user.UserId,
-                    firstName = user.Firstname,
-                    lastName = user.Lastname,
-                    dhbw = user.Dhbw,
-                    course = user.Course,
-                    courseAbr = user.CourseAbr,
-                    specialization = user.Specialization,
-                    email = user.EmailPrefix + "@" + loc.EmailDomain,
-                    city = user.City,
-                    biography = user.Biography,
-                    isVerified = user.IsVerified,
-                    tmsCreated = user.TmsCreated
-                };
-
+                from user in _context.VwUsers
+                join data in _context.Auth0UserData on user.UserId equals data.User
+                where data.RfidId == rfidId
+                select user;
 
             var result = await query.FirstOrDefaultAsync();
             if (result is null) {
@@ -81,28 +52,14 @@ namespace DatabaseAPI.Controllers {
 
         // GET: /Users/5/contacts
         //The user assosiated contacts of the user a returned
-        [HttpGet("{id:int}/contacts", Name = "getContactsByUserIdOld")]
-        public async Task<ActionResult<IEnumerable<Object>>> getContacsByUserIDOld(int id) {
+        [HttpGet("{id}/contacts", Name = "getContactsByUserId")]
+        public async Task<ActionResult<IEnumerable<Object>>> getContactsByUserID(string id) {
 
             var query =
-                from contact in _context.Contact
-                join user in _context.User on contact.Contact1 equals user.UserId
-                join loc in _context.Dhbw on user.Dhbw equals loc.Location
+                from contact in _context.Auth0Contacts
+                join user in _context.VwUsers on contact.Contact equals user.UserId
                 where contact.User == id
-                select new {
-                    userId = user.UserId,
-                    firstName = user.Firstname,
-                    lastName = user.Lastname,
-                    dhbw = user.Dhbw,
-                    course = user.Course,
-                    courseAbr = user.CourseAbr,
-                    specialization = user.Specialization,
-                    email = user.EmailPrefix + "@" + loc.EmailDomain,
-                    city = user.City,
-                    biography = user.Biography,
-                    isVerified = user.IsVerified,
-                    tmsCreated = user.TmsCreated
-                };
+                select user;
 
             var result = await query.ToListAsync();
 
@@ -114,12 +71,12 @@ namespace DatabaseAPI.Controllers {
 
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
-        [HttpDelete("{id:int}/contacts/{contactId}", Name = "deleteContactByUserIdOld")]
-        public async Task<ActionResult> deleteContactByUserIdOld(int id, int contactId) {
+        [HttpDelete("{id}/contacts/{contactId}", Name = "deleteContactByUserId")]
+        public async Task<ActionResult> deleteContactByUserId(string id, string contactId) {
 
             var query =
-                from contact in _context.Contact
-                where contact.User == id && contact.Contact1 == contactId
+                from contact in _context.Auth0Contacts
+                where contact.User == id && contact.Contact == contactId
                 select contact;
 
             var c = await query.FirstOrDefaultAsync();
@@ -128,7 +85,7 @@ namespace DatabaseAPI.Controllers {
                 return NotFound();
             }
 
-            _context.Contact.Remove(c);
+            _context.Auth0Contacts.Remove(c);
 
             try {
                 await _context.SaveChangesAsync();
@@ -141,19 +98,19 @@ namespace DatabaseAPI.Controllers {
 
         // GET: /Users/5/contacts
         //The user assosiated contacts of the user a returned
-        [HttpPost("{id:int}/contacts/add/{idContact:int}", Name = "addContactToUserOld")]
-        public async Task<ActionResult> addContactToUserOld(int id, int idContact) {
+        [HttpPost("{id}/contacts/{idContact}", Name = "addContactToUser")]
+        public async Task<ActionResult> addContactToUser(string id, string idContact) {
 
             if (id == idContact) {
                 return BadRequest();
             }
 
-            Contact contact = new Contact();
+            Auth0Contacts contact = new Auth0Contacts();
 
             contact.User = id;
-            contact.Contact1 = idContact;
+            contact.Contact = idContact;
 
-            _context.Contact.Add(contact);
+            _context.Auth0Contacts.Add(contact);
 
             try {
                 await _context.SaveChangesAsync();
@@ -161,22 +118,22 @@ namespace DatabaseAPI.Controllers {
                 return NotFound();
             }
 
-            return CreatedAtRoute("getContactsByUserIdOld", new { id = id }, null);
+            return CreatedAtRoute("getContactsByUserId", new { id = id }, null);
         }
 
         // GET: /Users/5/tags
         //The user assosiated contacts of the user a returned
-        [HttpGet("{id:int}/tags", Name = "getTagsByUserIdOld")]
-        public async Task<ActionResult<IEnumerable<Object>>> getTagsByUserIDOld(int id) {
+        [HttpGet("{id}/tags", Name = "getTagsByUserId")]
+        public async Task<ActionResult<IEnumerable<Object>>> getTagsByUserID(string id) {
 
             var query =
-                from tag in _context.Tag
+                from tag in _context.Auth0Tags
                 where tag.User == id
                 select new {
                     tagId = tag.TagId,
-                    tag = tag.Tag1,
+                    tag = tag.Tag,
                     user = tag.User,
-                    tmsCreated = tag.TmsCreated
+                    createdAt = tag.CreatedAt
                 };
 
             var result = await query.ToListAsync();
@@ -189,16 +146,16 @@ namespace DatabaseAPI.Controllers {
 
         // POST: /Users/5/tags
         //The user assosiated contacts of the user a returned
-        [HttpPost("{id:int}/tags/add/{text}", Name = "addTagToUserOld")]
-        public async Task<IActionResult> addTagToUserOld(int id, string text) {
+        [HttpPost("{id}/tags/{text}", Name = "addTagToUser")]
+        public async Task<IActionResult> addTagToUser(string id, string text) {
 
 
-            Tag tag = new Tag();
+            Auth0Tags tag = new Auth0Tags();
 
             tag.User = id;
-            tag.Tag1 = text;
+            tag.Tag = text;
 
-            _context.Tag.Add(tag);
+            _context.Auth0Tags.Add(tag);
 
             try {
                 await _context.SaveChangesAsync();
@@ -208,54 +165,46 @@ namespace DatabaseAPI.Controllers {
 
             var result = new {
                 tagId = tag.TagId,
-                tag = tag.Tag1,
+                tag = tag.Tag,
                 user = tag.User,
-                tmsCreated = tag.TmsCreated
+                createdAt = tag.CreatedAt
             };
 
-            return CreatedAtRoute("getTagByTagIdOld", new { id = tag.TagId }, result);
+            return CreatedAtRoute("getTagByTagId", new { id = tag.TagId }, result);
         }
 
-        [HttpPost("{id:int}/edit", Name = "editUserOld")]
-        public async Task<IActionResult> editUserOld(User editedUser) {
+        // GET: /Users/contacts/5
+        //The user assosiated contacts of the user a returned
+        [HttpDelete("{id}/tags/{tagId:int}", Name = "deleteTagByTagId")]
+        public async Task<ActionResult> deleteTagByTagId(int tagId) {
 
-            var user = _context.User.FirstOrDefault(u => u.UserId == editedUser.UserId);
+            var tag = await _context.Auth0Tags.FindAsync(tagId);
 
-            Console.WriteLine(editedUser);
-            Console.WriteLine("CourseAbr: " + editedUser.CourseAbr);
-            Console.WriteLine("Course: " + editedUser.Course);
-            Console.WriteLine("Specialization: " + editedUser.Specialization);
-            Console.WriteLine("City: " + editedUser.City);
-            Console.WriteLine("Bio: " + editedUser.Biography);
-            Console.WriteLine("RfidId: " + editedUser.RfidId);
-            Console.WriteLine("PwHash: " + editedUser.PwHash);
-            Console.WriteLine("IsVerified: " + editedUser.IsVerified);
-            Console.WriteLine("TmsCreated" + editedUser.TmsCreated == null);
-            Console.WriteLine("PwHash: " + editedUser.PwHash);
-            Console.WriteLine("VerificationId: " + editedUser.VerificationId);
-            Console.WriteLine(editedUser.Firstname == null);
+            _context.Auth0Tags.Remove(tag);
 
-            bool isValid = (
-                (user.VerificationId == editedUser.VerificationId || editedUser.VerificationId == 0) &&
-                (user.IsVerified == editedUser.IsVerified || editedUser.IsVerified == false) &&
-                (user.Firstname == editedUser.Firstname || editedUser.Firstname == null) &&
-                (user.Lastname == editedUser.Lastname || editedUser.Lastname == null) &&
-                (user.EmailPrefix == editedUser.EmailPrefix || editedUser.EmailPrefix == null) &&
-                (user.Dhbw == editedUser.Dhbw || editedUser.Dhbw == null) &&
-                (user.TmsCreated == editedUser.TmsCreated || editedUser.TmsCreated == null)
-            );
-
-            Console.WriteLine(isValid);
-
-            if (!isValid) {
-                return Conflict("Some data provided can't be changed");
+            try {
+                await _context.SaveChangesAsync();
+            } catch (DbUpdateException) {
+                return Conflict();
             }
+
+            return Ok();
+        }
+
+        public class UserWithRfid : VwUsers {
+            public string RfidId { get; set; }
+        }
+
+        [HttpPatch("{id}", Name = "editUser")]
+        public async Task<IActionResult> editUser(UserWithRfid editedUser) {
+
+            var user = _context.Auth0UserData.FirstOrDefault(u => u.User == editedUser.UserId);
 
             if (editedUser.Course != null) {
                 user.Course = editedUser.Course;
             }
-            if (editedUser.CourseAbr != null) {
-                user.CourseAbr = editedUser.CourseAbr;
+            if (editedUser.CourseAbbr != null) {
+                user.CourseAbbr = editedUser.CourseAbbr;
             }
             if (editedUser.Specialization != null) {
                 user.Specialization = editedUser.Specialization;
@@ -269,9 +218,6 @@ namespace DatabaseAPI.Controllers {
             if (editedUser.RfidId != null) {
                 user.RfidId = editedUser.RfidId;
             }
-            if (editedUser.PwHash != null) {
-                user.PwHash = editedUser.PwHash;
-            }
 
             try {
                 await _context.SaveChangesAsync();
@@ -284,16 +230,16 @@ namespace DatabaseAPI.Controllers {
 
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
-        [HttpDelete("{id:int}", Name = "deleteUserByUserIdOld")]
-        public async Task<ActionResult> deleteUserByUserIdOld(int id) {
+        [HttpDelete("{id}", Name = "deleteUserByUserId")]
+        public async Task<ActionResult> deleteUserByUserId(string id) {
 
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.Auth0Users.FindAsync(id);
 
             if (user is null) {
                 return NotFound();
             }
 
-            _context.User.Remove(user);
+            _context.Auth0Users.Remove(user);
 
             try {
                 await _context.SaveChangesAsync();

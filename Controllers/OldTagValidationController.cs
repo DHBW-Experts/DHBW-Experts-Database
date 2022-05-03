@@ -8,30 +8,30 @@ using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Model;
 
 namespace DatabaseAPI.Controllers {
-    [Route("auth0-tag-validations")]
+    [Route("old/tag-validations")]
     [ApiController]
-    public class Auth0TagValidationController : ControllerBase {
+    public class OldTagValidationController : ControllerBase {
         private readonly DHBWExpertsdatabaseContext _context;
 
         //The context is managed by the WEBAPI and used here via Dependency Injection.
-        public Auth0TagValidationController(DHBWExpertsdatabaseContext context) {
+        public OldTagValidationController(DHBWExpertsdatabaseContext context) {
             _context = context;
         }
 
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
-        [HttpGet("{id:int}", Name = "getValidationByValId")]
-        public async Task<ActionResult<Object>> getValidationsByTagId(int id) {
+        [HttpGet("{id:int}", Name = "getValidationByValIdOld")]
+        public async Task<ActionResult<Object>> getValidationsByTagIdOld(int id) {
 
             var query =
-                from val in _context.Auth0TagValidations
+                from val in _context.TagValidation
                 where val.ValidationId == id
                 select new {
                     validationId = val.ValidationId,
                     tag = val.Tag,
                     validatedBy = val.ValidatedBy,
                     comment = val.Comment,
-                    CreatedAt = val.CreatedAt
+                    tmsCreated = val.TmsCreated
                 };
 
             var result = await query.FirstOrDefaultAsync();
@@ -44,16 +44,16 @@ namespace DatabaseAPI.Controllers {
 
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
-        [HttpDelete("{id:int}", Name = "deleteTagValidationByTagId")]
-        public async Task<ActionResult> deleteTagValByValId(int id) {
+        [HttpDelete("{id:int}", Name = "deleteTagValidationByTagIdOld")]
+        public async Task<ActionResult> deleteTagValByValIdOld(int id) {
 
-            var val = await _context.Auth0TagValidations.FindAsync(id);
+            var val = await _context.TagValidation.FindAsync(id);
 
             if (val is null) {
                 return NotFound();
             }
 
-            _context.Auth0TagValidations.Remove(val);
+            _context.TagValidation.Remove(val);
 
             try {
                 await _context.SaveChangesAsync();
