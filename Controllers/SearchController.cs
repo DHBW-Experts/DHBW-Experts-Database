@@ -22,7 +22,7 @@ namespace DatabaseAPI.Controllers {
         [HttpGet("tags/{text}", Name = "getTagsByText")]
         public async Task<ActionResult<Object>> getTagsByText(string text) {
             var query =
-               from tags in _context.Auth0Tags
+               from tags in _context.Tags
                where tags.Tag.Contains(text)
                select new {
                    tag = tags.Tag
@@ -38,7 +38,7 @@ namespace DatabaseAPI.Controllers {
         public async Task<ActionResult<IEnumerable<Object>>> GetUsersByTag(string text) {
             var query =
                 from user in _context.VwUsers
-                join tags in _context.Auth0Tags on user.UserId equals tags.User
+                join tags in _context.Tags on user.UserId equals tags.User
                 where tags.Tag.Contains(text)
                 select user;
 

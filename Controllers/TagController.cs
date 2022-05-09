@@ -24,14 +24,14 @@ namespace DatabaseAPI.Controllers {
         public async Task<ActionResult<IEnumerable<Object>>> getValidationsByTagId(int id) {
 
             var query =
-                from val in _context.TagValidation
+                from val in _context.TagValidations
                 where val.Tag == id
                 select new {
                     validationId = val.ValidationId,
                     tag = val.Tag,
                     validatedBy = val.ValidatedBy,
                     comment = val.Comment,
-                    tmsCreated = val.TmsCreated
+                    tmsCreated = val.CreatedAt
                 };
 
             var result = await query.ToListAsync();
@@ -48,7 +48,7 @@ namespace DatabaseAPI.Controllers {
         public async Task<ActionResult<IEnumerable<Object>>> getTagByTagId(int id) {
 
             var query =
-                from tags in _context.Auth0Tags
+                from tags in _context.Tags
                 where tags.TagId == id
                 select new {
                     tagId = tags.TagId,

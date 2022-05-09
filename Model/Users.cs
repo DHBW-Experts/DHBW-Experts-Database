@@ -5,14 +5,14 @@ using System.Collections.Generic;
 
 namespace DatabaseAPI.Model
 {
-    public partial class Auth0Users
+    public partial class Users
     {
         public string UserId { get; set; }
         public string EmailPrefix { get; set; }
         public string EmailDomain { get; set; }
         public DateTime? CreatedAt { get; set; }
 
-        public virtual Auth0DhbwDomains EmailDomainNavigation { get; set; }
-        public virtual Auth0UserData Auth0UserData { get; set; }
+        public virtual DhbwDomains EmailDomainNavigation { get; set; }
+        public virtual UserData UserData { get; set; }
     }
 }

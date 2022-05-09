@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace DatabaseAPI.Model
 {
-    public partial class Auth0TagValidations
+    public partial class TagValidations
     {
         public int ValidationId { get; set; }
         public int Tag { get; set; }
@@ -13,7 +13,7 @@ namespace DatabaseAPI.Model
         public string Comment { get; set; }
         public DateTime? CreatedAt { get; set; }
 
-        public virtual Auth0Tags TagNavigation { get; set; }
-        public virtual Auth0UserData ValidatedByNavigation { get; set; }
+        public virtual Tags TagNavigation { get; set; }
+        public virtual UserData ValidatedByNavigation { get; set; }
     }
 }

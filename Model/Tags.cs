@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 namespace DatabaseAPI.Model
 {
-    public partial class Auth0Tags
+    public partial class Tags
     {
-        public Auth0Tags()
+        public Tags()
         {
-            Auth0TagValidations = new HashSet<Auth0TagValidations>();
+            TagValidations = new HashSet<TagValidations>();
         }
 
         public int TagId { get; set; }
@@ -17,7 +17,7 @@ namespace DatabaseAPI.Model
         public string User { get; set; }
         public DateTime? CreatedAt { get; set; }
 
-        public virtual Auth0UserData UserNavigation { get; set; }
-        public virtual ICollection<Auth0TagValidations> Auth0TagValidations { get; set; }
+        public virtual UserData UserNavigation { get; set; }
+        public virtual ICollection<TagValidations> TagValidations { get; set; }
     }
 }

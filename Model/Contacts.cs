@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace DatabaseAPI.Model
 {
-    public partial class Auth0Contacts
+    public partial class Contacts
     {
         public string User { get; set; }
         public string Contact { get; set; }
         public DateTime? CreatedAt { get; set; }
 
-        public virtual Auth0UserData ContactNavigation { get; set; }
-        public virtual Auth0UserData UserNavigation { get; set; }
+        public virtual UserData ContactNavigation { get; set; }
+        public virtual UserData UserNavigation { get; set; }
     }
 }

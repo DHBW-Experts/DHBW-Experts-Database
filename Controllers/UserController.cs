@@ -39,7 +39,7 @@ namespace DatabaseAPI.Controllers {
         public async Task<ActionResult<Object>> getUserByRfidId(string rfidId) {
             var query =
                 from user in _context.VwUsers
-                join data in _context.Auth0UserData on user.UserId equals data.User
+                join data in _context.UserData on user.UserId equals data.User
                 where data.RfidId == rfidId
                 select user;
 
@@ -56,7 +56,7 @@ namespace DatabaseAPI.Controllers {
         public async Task<ActionResult<IEnumerable<Object>>> getContactsByUserID(string id) {
 
             var query =
-                from contact in _context.Auth0Contacts
+                from contact in _context.Contacts
                 join user in _context.VwUsers on contact.Contact equals user.UserId
                 where contact.User == id
                 select user;
@@ -75,7 +75,7 @@ namespace DatabaseAPI.Controllers {
         public async Task<ActionResult> deleteContactByUserId(string id, string contactId) {
 
             var query =
-                from contact in _context.Auth0Contacts
+                from contact in _context.Contacts
                 where contact.User == id && contact.Contact == contactId
                 select contact;
 
@@ -85,7 +85,7 @@ namespace DatabaseAPI.Controllers {
                 return NotFound();
             }
 
-            _context.Auth0Contacts.Remove(c);
+            _context.Contacts.Remove(c);
 
             try {
                 await _context.SaveChangesAsync();
@@ -105,12 +105,12 @@ namespace DatabaseAPI.Controllers {
                 return BadRequest();
             }
 
-            Auth0Contacts contact = new Auth0Contacts();
+            Contacts contact = new Contacts();
 
             contact.User = id;
             contact.Contact = idContact;
 
-            _context.Auth0Contacts.Add(contact);
+            _context.Contacts.Add(contact);
 
             try {
                 await _context.SaveChangesAsync();
@@ -127,7 +127,7 @@ namespace DatabaseAPI.Controllers {
         public async Task<ActionResult<IEnumerable<Object>>> getTagsByUserID(string id) {
 
             var query =
-                from tag in _context.Auth0Tags
+                from tag in _context.Tags
                 where tag.User == id
                 select new {
                     tagId = tag.TagId,
@@ -150,12 +150,12 @@ namespace DatabaseAPI.Controllers {
         public async Task<IActionResult> addTagToUser(string id, string text) {
 
 
-            Auth0Tags tag = new Auth0Tags();
+            Tags tag = new Tags();
 
             tag.User = id;
             tag.Tag = text;
 
-            _context.Auth0Tags.Add(tag);
+            _context.Tags.Add(tag);
 
             try {
                 await _context.SaveChangesAsync();
@@ -178,9 +178,9 @@ namespace DatabaseAPI.Controllers {
         [HttpDelete("{id}/tags/{tagId:int}", Name = "deleteTagByTagId")]
         public async Task<ActionResult> deleteTagByTagId(int tagId) {
 
-            var tag = await _context.Auth0Tags.FindAsync(tagId);
+            var tag = await _context.Tags.FindAsync(tagId);
 
-            _context.Auth0Tags.Remove(tag);
+            _context.Tags.Remove(tag);
 
             try {
                 await _context.SaveChangesAsync();
@@ -198,7 +198,7 @@ namespace DatabaseAPI.Controllers {
         [HttpPatch("{id}", Name = "editUser")]
         public async Task<IActionResult> editUser(UserWithRfid editedUser) {
 
-            var user = _context.Auth0UserData.FirstOrDefault(u => u.User == editedUser.UserId);
+            var user = _context.UserData.FirstOrDefault(u => u.User == editedUser.UserId);
 
             if (editedUser.Course != null) {
                 user.Course = editedUser.Course;
@@ -233,13 +233,13 @@ namespace DatabaseAPI.Controllers {
         [HttpDelete("{id}", Name = "deleteUserByUserId")]
         public async Task<ActionResult> deleteUserByUserId(string id) {
 
-            var user = await _context.Auth0Users.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
 
             if (user is null) {
                 return NotFound();
             }
 
-            _context.Auth0Users.Remove(user);
+            _context.Users.Remove(user);
 
             try {
                 await _context.SaveChangesAsync();

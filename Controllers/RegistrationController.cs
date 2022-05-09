@@ -20,7 +20,7 @@ namespace DatabaseAPI.Controllers {
         public async Task<IActionResult> registerUser(VwUsers registeredUser) {
             
             var user = _context.VwUsers.FirstOrDefault(u => u.UserId == registeredUser.UserId);
-            var userData = new Auth0UserData();
+            var userData = new UserData();
 
             var isBadRequest =
                 registeredUser.Firstname == null ||
@@ -46,7 +46,7 @@ namespace DatabaseAPI.Controllers {
             userData.Biography = registeredUser.Biography;
             userData.RfidId = null;
 
-            _context.Auth0UserData.Add(userData);
+            _context.UserData.Add(userData);
             
             try {
                 await _context.SaveChangesAsync();
