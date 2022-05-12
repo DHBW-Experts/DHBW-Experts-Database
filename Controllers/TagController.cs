@@ -57,6 +57,13 @@ namespace DatabaseAPI.Controllers {
                     tagId = tags.TagId,
                     tag = tags.Tag,
                     user = tags.User,
+                    validations = from val in tags.TagValidations select new {
+                        validationId = val.ValidationId,
+                        tag = val.Tag,
+                        validatedBy = val.ValidatedBy,
+                        comment = val.Comment,
+                        CreatedAt = val.CreatedAt
+                },
                     createdAt = tags.CreatedAt
                 };
 

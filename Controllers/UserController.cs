@@ -36,23 +36,6 @@ namespace DatabaseAPI.Controllers {
             return result;
         }
 
-        //GET: /Users/rfid/432a9e7b626c87f
-        [HttpGet("rfid/{rfidId}")]
-        [Authorize]
-        public async Task<ActionResult<Object>> getUserByRfidId(string rfidId) {
-            var query =
-                from user in _context.VwUsers
-                join data in _context.UserData on user.UserId equals data.User
-                where data.RfidId == rfidId
-                select user;
-
-            var result = await query.FirstOrDefaultAsync();
-            if (result is null) {
-                return NotFound();
-            }
-            return result;
-        }
-
         // GET: /Users/5/contacts
         //The user assosiated contacts of the user a returned
         [HttpGet("{id}/contacts", Name = "getContactsByUserId")]
@@ -140,6 +123,13 @@ namespace DatabaseAPI.Controllers {
                     tagId = tag.TagId,
                     tag = tag.Tag,
                     user = tag.User,
+                    validations = from val in tag.TagValidations select new {
+                        validationId = val.ValidationId,
+                        tag = val.Tag,
+                        validatedBy = val.ValidatedBy,
+                        comment = val.Comment,
+                        CreatedAt = val.CreatedAt
+                },
                     createdAt = tag.CreatedAt
                 };
 
@@ -172,11 +162,12 @@ namespace DatabaseAPI.Controllers {
             }
 
             var result = new {
-                tagId = tag.TagId,
-                tag = tag.Tag,
-                user = tag.User,
-                createdAt = tag.CreatedAt
-            };
+                    tagId = tag.TagId,
+                    tag = tag.Tag,
+                    user = tag.User,
+                    validations = new int[0],
+                    createdAt = tag.CreatedAt
+                };
 
             return CreatedAtRoute("getTagByTagId", new { id = tag.TagId }, result);
         }

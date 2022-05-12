@@ -50,6 +50,23 @@ namespace DatabaseAPI.Controllers {
             return result;
         }
 
+        //GET: /Users/rfid/432a9e7b626c87f
+        [HttpGet("users/rfid/{rfidId}")]
+        [Authorize]
+        public async Task<ActionResult<Object>> getUserByRfidId(string rfidId) {
+            var query =
+                from user in _context.VwUsers
+                join data in _context.UserData on user.UserId equals data.User
+                where data.RfidId == rfidId
+                select user;
+
+            var result = await query.FirstOrDefaultAsync();
+            if (result is null) {
+                return NotFound();
+            }
+            return result;
+        }
+
     }
-    
+
 }
