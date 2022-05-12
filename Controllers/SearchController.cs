@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DatabaseAPI.Controllers {
     [Route("search")]
@@ -20,6 +21,7 @@ namespace DatabaseAPI.Controllers {
 
         // GET: /Search/Tags/LaTeX
         [HttpGet("tags/{text}", Name = "getTagsByText")]
+        [Authorize]
         public async Task<ActionResult<Object>> getTagsByText(string text) {
             var query =
                from tags in _context.Tags
@@ -35,6 +37,7 @@ namespace DatabaseAPI.Controllers {
 
         // GET: /Search/Tags/LaTeX
         [HttpGet("users/tags/{text}", Name = "getUsersByTag")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Object>>> GetUsersByTag(string text) {
             var query =
                 from user in _context.VwUsers
@@ -48,4 +51,5 @@ namespace DatabaseAPI.Controllers {
         }
 
     }
+    
 }

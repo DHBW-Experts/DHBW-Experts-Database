@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DatabaseAPI.Controllers {
     [Route("register")]

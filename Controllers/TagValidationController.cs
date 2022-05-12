@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DatabaseAPI.Controllers {
     [Route("tag-validations")]
@@ -21,6 +22,7 @@ namespace DatabaseAPI.Controllers {
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
         [HttpGet("{id:int}", Name = "getValidationByValId")]
+        [Authorize]
         public async Task<ActionResult<Object>> getValidationsByTagId(int id) {
 
             var query =
@@ -45,6 +47,7 @@ namespace DatabaseAPI.Controllers {
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
         [HttpDelete("{id:int}", Name = "deleteTagValidationByTagId")]
+        [Authorize]
         public async Task<ActionResult> deleteTagValByValId(int id) {
 
             var val = await _context.TagValidations.FindAsync(id);
@@ -65,7 +68,5 @@ namespace DatabaseAPI.Controllers {
         }
 
     }
-
-
 
 }

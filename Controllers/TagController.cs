@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DatabaseAPI.Controllers {
     [Route("tags")]
@@ -21,6 +22,7 @@ namespace DatabaseAPI.Controllers {
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
         [HttpGet("{id:int}/validations", Name = "getValidationsByTagId")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Object>>> getValidationsByTagId(int id) {
 
             var query =
@@ -45,6 +47,7 @@ namespace DatabaseAPI.Controllers {
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
         [HttpGet("{id:int}", Name = "getTagByTagId")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Object>>> getTagByTagId(int id) {
 
             var query =
@@ -66,7 +69,5 @@ namespace DatabaseAPI.Controllers {
         }
 
     }
-
-
 
 }

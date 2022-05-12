@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DatabaseAPI.Controllers {
     [Route("users")]
@@ -21,6 +22,7 @@ namespace DatabaseAPI.Controllers {
         // GET: /Users/626db5fc4105f20069997435
         //The user assosiated with the specified ID is returned, if found.
         [HttpGet("{id}", Name = "getUserById")]
+        [Authorize]
         public async Task<ActionResult<Object>> getUserById(string id) {
             var query =
                 from user in _context.VwUsers
@@ -36,6 +38,7 @@ namespace DatabaseAPI.Controllers {
 
         //GET: /Users/rfid/432a9e7b626c87f
         [HttpGet("rfid/{rfidId}")]
+        [Authorize]
         public async Task<ActionResult<Object>> getUserByRfidId(string rfidId) {
             var query =
                 from user in _context.VwUsers
@@ -53,6 +56,7 @@ namespace DatabaseAPI.Controllers {
         // GET: /Users/5/contacts
         //The user assosiated contacts of the user a returned
         [HttpGet("{id}/contacts", Name = "getContactsByUserId")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Object>>> getContactsByUserID(string id) {
 
             var query =
@@ -72,6 +76,7 @@ namespace DatabaseAPI.Controllers {
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
         [HttpDelete("{id}/contacts/{contactId}", Name = "deleteContactByUserId")]
+        [Authorize]
         public async Task<ActionResult> deleteContactByUserId(string id, string contactId) {
 
             var query =
@@ -99,6 +104,7 @@ namespace DatabaseAPI.Controllers {
         // GET: /Users/5/contacts
         //The user assosiated contacts of the user a returned
         [HttpPost("{id}/contacts/{idContact}", Name = "addContactToUser")]
+        [Authorize]
         public async Task<ActionResult> addContactToUser(string id, string idContact) {
 
             if (id == idContact) {
@@ -124,6 +130,7 @@ namespace DatabaseAPI.Controllers {
         // GET: /Users/5/tags
         //The user assosiated contacts of the user a returned
         [HttpGet("{id}/tags", Name = "getTagsByUserId")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Object>>> getTagsByUserID(string id) {
 
             var query =
@@ -147,6 +154,7 @@ namespace DatabaseAPI.Controllers {
         // POST: /Users/5/tags
         //The user assosiated contacts of the user a returned
         [HttpPost("{id}/tags/{text}", Name = "addTagToUser")]
+        [Authorize]
         public async Task<IActionResult> addTagToUser(string id, string text) {
 
 
@@ -176,6 +184,7 @@ namespace DatabaseAPI.Controllers {
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
         [HttpDelete("{id}/tags/{tagId:int}", Name = "deleteTagByTagId")]
+        [Authorize]
         public async Task<ActionResult> deleteTagByTagId(int tagId) {
 
             var tag = await _context.Tags.FindAsync(tagId);
@@ -196,6 +205,7 @@ namespace DatabaseAPI.Controllers {
         }
 
         [HttpPatch("{id}", Name = "editUser")]
+        [Authorize]
         public async Task<IActionResult> editUser(UserWithRfid editedUser) {
 
             var user = _context.UserData.FirstOrDefault(u => u.User == editedUser.UserId);
@@ -231,6 +241,7 @@ namespace DatabaseAPI.Controllers {
         // GET: /Users/contacts/5
         //The user assosiated contacts of the user a returned
         [HttpDelete("{id}", Name = "deleteUserByUserId")]
+        [Authorize]
         public async Task<ActionResult> deleteUserByUserId(string id) {
 
             var user = await _context.Users.FindAsync(id);
@@ -251,7 +262,5 @@ namespace DatabaseAPI.Controllers {
         }
 
     }
-
-
 
 }
