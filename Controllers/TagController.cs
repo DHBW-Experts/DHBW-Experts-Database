@@ -33,7 +33,7 @@ namespace DatabaseAPI.Controllers {
                     tag = val.Tag,
                     validatedBy = val.ValidatedBy,
                     comment = val.Comment,
-                    tmsCreated = val.CreatedAt
+                    createdAt = val.CreatedAt
                 };
 
             var result = await query.ToListAsync();
