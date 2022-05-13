@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -19,15 +17,13 @@ namespace DatabaseAPI.Controllers {
             _context = context;
         }
 
-        // GET: /Users/contacts/5
-        //The user assosiated contacts of the user a returned
-        [HttpGet("{id:int}", Name = "getValidationByValId")]
+        [HttpGet("{valId:int}", Name = "getValidationByValId")]
         [Authorize]
-        public async Task<ActionResult<Object>> getValidationsByTagId(int id) {
+        public async Task<ActionResult<Object>> getValidationsByTagId(int valId) {
 
             var query =
                 from val in _context.TagValidations
-                where val.ValidationId == id
+                where val.ValidationId == valId
                 select new {
                     validationId = val.ValidationId,
                     tag = val.Tag,
@@ -44,13 +40,11 @@ namespace DatabaseAPI.Controllers {
             return result;
         }
 
-        // GET: /Users/contacts/5
-        //The user assosiated contacts of the user a returned
-        [HttpDelete("{id:int}", Name = "deleteTagValidationByTagId")]
+        [HttpDelete("{valId:int}", Name = "deleteTagValidationByTagId")]
         [Authorize]
-        public async Task<ActionResult> deleteTagValByValId(int id) {
+        public async Task<ActionResult> deleteTagValByValId(int valId) {
 
-            var val = await _context.TagValidations.FindAsync(id);
+            var val = await _context.TagValidations.FindAsync(valId);
 
             if (val is null) {
                 return NotFound();

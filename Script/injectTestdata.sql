@@ -58,6 +58,12 @@ INSERT INTO [users] (
         'unverifiziert.ulrich',
         'student.dhbw-karlsruhe.de',
         '2022-04-30 22:23:21.170'
+        ),
+        (
+        '627b8f4fdf614a006fa372d1',
+        'holler.lukas',
+        'student.dhbw-karlsruhe.de',
+        '2022-05-11 12:26:23.772'
         )
 GO
 
@@ -104,6 +110,17 @@ INSERT INTO [user_data] (
         'Karlsruhe',
         N'Hello World',
         '3C'
+        ),
+        (
+        '627b8f4fdf614a006fa372d1',
+        'Lukas', 
+        'Holler',
+        'TINF20B2', 
+        'Informatik',
+        null,
+        'Ettlingen',
+        N'Grüße aus dem Dev-Team!',
+        null
         )
 GO
 --------------------------------

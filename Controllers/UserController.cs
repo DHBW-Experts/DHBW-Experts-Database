@@ -19,14 +19,12 @@ namespace DatabaseAPI.Controllers {
             _context = context;
         }
 
-        // GET: /Users/626db5fc4105f20069997435
-        //The user assosiated with the specified ID is returned, if found.
-        [HttpGet("{id}", Name = "getUserById")]
+        [HttpGet("{userId}", Name = "getUserById")]
         [Authorize]
-        public async Task<ActionResult<Object>> getUserById(string id) {
+        public async Task<ActionResult<Object>> getUserById(string userId) {
             var query =
                 from user in _context.VwUsers
-                where user.UserId == id
+                where user.UserId == userId
                 select user;
 
             var result = await query.FirstOrDefaultAsync();
@@ -36,16 +34,14 @@ namespace DatabaseAPI.Controllers {
             return result;
         }
 
-        // GET: /Users/5/contacts
-        //The user assosiated contacts of the user a returned
-        [HttpGet("{id}/contacts", Name = "getContactsByUserId")]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<Object>>> getContactsByUserID(string id) {
+        [HttpGet("{userId}/contacts", Name = "getContactsByUserId")]
+        [Authorize("read:profile")]
+        public async Task<ActionResult<IEnumerable<Object>>> getContactsByUserID(string userId) {
 
             var query =
                 from contact in _context.Contacts
                 join user in _context.VwUsers on contact.Contact equals user.UserId
-                where contact.User == id
+                where contact.User == userId
                 select user;
 
             var result = await query.ToListAsync();
@@ -56,15 +52,13 @@ namespace DatabaseAPI.Controllers {
             return NotFound();
         }
 
-        // GET: /Users/contacts/5
-        //The user assosiated contacts of the user a returned
-        [HttpDelete("{id}/contacts/{contactId}", Name = "deleteContactByUserId")]
-        [Authorize]
-        public async Task<ActionResult> deleteContactByUserId(string id, string contactId) {
+        [HttpDelete("{userId}/contacts/{contactId}", Name = "deleteContactByUserId")]
+        [Authorize("write:profile")]
+        public async Task<ActionResult> deleteContactByUserId(string userId, string contactId) {
 
             var query =
                 from contact in _context.Contacts
-                where contact.User == id && contact.Contact == contactId
+                where contact.User == userId && contact.Contact == contactId
                 select contact;
 
             var c = await query.FirstOrDefaultAsync();
@@ -84,19 +78,17 @@ namespace DatabaseAPI.Controllers {
             return Ok();
         }
 
-        // GET: /Users/5/contacts
-        //The user assosiated contacts of the user a returned
-        [HttpPost("{id}/contacts/{idContact}", Name = "addContactToUser")]
-        [Authorize]
-        public async Task<ActionResult> addContactToUser(string id, string idContact) {
+        [HttpPost("{userId}/contacts/{idContact}", Name = "addContactToUser")]
+        [Authorize("write:profile")]
+        public async Task<ActionResult> addContactToUser(string userId, string idContact) {
 
-            if (id == idContact) {
+            if (userId == idContact) {
                 return BadRequest();
             }
 
             Contacts contact = new Contacts();
 
-            contact.User = id;
+            contact.User = userId;
             contact.Contact = idContact;
 
             _context.Contacts.Add(contact);
@@ -107,29 +99,20 @@ namespace DatabaseAPI.Controllers {
                 return NotFound();
             }
 
-            return CreatedAtRoute("getContactsByUserId", new { id = id }, null);
+            return CreatedAtRoute("getContactsByUserId", new { userId = userId }, null);
         }
 
-        // GET: /Users/5/tags
-        //The user assosiated contacts of the user a returned
-        [HttpGet("{id}/tags", Name = "getTagsByUserId")]
+        [HttpGet("{userId}/tags", Name = "getTagsByUserId")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Object>>> getTagsByUserID(string id) {
+        public async Task<ActionResult<IEnumerable<Object>>> getTagsByUserID(string userId) {
 
             var query =
                 from tag in _context.Tags
-                where tag.User == id
+                where tag.User == userId
                 select new {
                     tagId = tag.TagId,
                     tag = tag.Tag,
                     user = tag.User,
-                    validations = from val in tag.TagValidations select new {
-                        validationId = val.ValidationId,
-                        tag = val.Tag,
-                        validatedBy = val.ValidatedBy,
-                        comment = val.Comment,
-                        CreatedAt = val.CreatedAt
-                },
                     createdAt = tag.CreatedAt
                 };
 
@@ -141,16 +124,14 @@ namespace DatabaseAPI.Controllers {
             return NotFound();
         }
 
-        // POST: /Users/5/tags
-        //The user assosiated contacts of the user a returned
-        [HttpPost("{id}/tags/{text}", Name = "addTagToUser")]
-        [Authorize]
-        public async Task<IActionResult> addTagToUser(string id, string text) {
+        [HttpPost("{userId}/tags/{text}", Name = "addTagToUser")]
+        [Authorize("write:profile")]
+        public async Task<IActionResult> addTagToUser(string userId, string text) {
 
 
             Tags tag = new Tags();
 
-            tag.User = id;
+            tag.User = userId;
             tag.Tag = text;
 
             _context.Tags.Add(tag);
@@ -169,13 +150,11 @@ namespace DatabaseAPI.Controllers {
                     createdAt = tag.CreatedAt
                 };
 
-            return CreatedAtRoute("getTagByTagId", new { id = tag.TagId }, result);
+            return CreatedAtRoute("getTagByTagId", new { userId = tag.TagId }, result);
         }
 
-        // GET: /Users/contacts/5
-        //The user assosiated contacts of the user a returned
-        [HttpDelete("{id}/tags/{tagId:int}", Name = "deleteTagByTagId")]
-        [Authorize]
+        [HttpDelete("{userId}/tags/{tagId:int}", Name = "deleteTagByTagId")]
+        [Authorize("write:profile")]
         public async Task<ActionResult> deleteTagByTagId(int tagId) {
 
             var tag = await _context.Tags.FindAsync(tagId);
@@ -195,8 +174,8 @@ namespace DatabaseAPI.Controllers {
             public string RfidId { get; set; }
         }
 
-        [HttpPatch("{id}", Name = "editUser")]
-        [Authorize]
+        [HttpPatch("{userId}", Name = "editUser")]
+        [Authorize("write:profile")]
         public async Task<IActionResult> editUser(UserWithRfid editedUser) {
 
             var user = _context.UserData.FirstOrDefault(u => u.User == editedUser.UserId);
@@ -229,13 +208,11 @@ namespace DatabaseAPI.Controllers {
             return Ok();
         }
 
-        // GET: /Users/contacts/5
-        //The user assosiated contacts of the user a returned
-        [HttpDelete("{id}", Name = "deleteUserByUserId")]
-        [Authorize]
-        public async Task<ActionResult> deleteUserByUserId(string id) {
+        [HttpDelete("{userId}", Name = "deleteUserByUserId")]
+        [Authorize("write:profile")]
+        public async Task<ActionResult> deleteUserByUserId(string userId) {
 
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.FindAsync(userId);
 
             if (user is null) {
                 return NotFound();

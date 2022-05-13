@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +18,6 @@ namespace DatabaseAPI.Controllers {
             _context = context;
         }
 
-        // GET: /Search/Tags/LaTeX
         [HttpGet("tags/{text}", Name = "getTagsByText")]
         [Authorize]
         public async Task<ActionResult<Object>> getTagsByText(string text) {
@@ -35,7 +33,6 @@ namespace DatabaseAPI.Controllers {
             return result;
         }
 
-        // GET: /Search/Tags/LaTeX
         [HttpGet("users/tags/{text}", Name = "getUsersByTag")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<Object>>> GetUsersByTag(string text) {
@@ -50,7 +47,6 @@ namespace DatabaseAPI.Controllers {
             return result;
         }
 
-        //GET: /Users/rfid/432a9e7b626c87f
         [HttpGet("users/rfid/{rfidId}")]
         [Authorize]
         public async Task<ActionResult<Object>> getUserByRfidId(string rfidId) {

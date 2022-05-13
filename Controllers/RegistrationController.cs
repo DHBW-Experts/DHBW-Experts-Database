@@ -17,13 +17,15 @@ namespace DatabaseAPI.Controllers {
             _context = context;
         }
 
-        [HttpPost("{id}", Name = "registerUser")]
-        public async Task<IActionResult> registerUser(VwUsers registeredUser) {
+        [HttpPost("{userId}", Name = "registerUser")]
+        [Authorize("write:profile")]
+        public async Task<IActionResult> registerUser(string userId, VwUsers registeredUser) {
             
             var user = _context.VwUsers.FirstOrDefault(u => u.UserId == registeredUser.UserId);
             var userData = new UserData();
 
             var isBadRequest =
+                userId != registeredUser.UserId ||
                 registeredUser.Firstname == null ||
                 registeredUser.Lastname == null ||
                 registeredUser.Course == null ||

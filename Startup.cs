@@ -7,12 +7,14 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Xml;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using DatabaseAPI.Authentication;
 using DatabaseAPI.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace DatabaseAPI
 {
@@ -40,7 +42,10 @@ namespace DatabaseAPI
                     .AddXmlDataContractSerializerFormatters()//Adds the necesarry Serializer to return XML objects instead of the default Json objects.
                     .AddXmlSerializerFormatters();
             services.AddCors();
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -53,7 +58,11 @@ namespace DatabaseAPI
             
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("auth0-api", policy => policy.Requirements.Add(new HasScopeRequirement("auth0-api", "https://dhbw-experts.eu.auth0.com/")));
+                options.AddPolicy("read:auth0-api", policy => policy.Requirements.Add(new HasScopeRequirement("read:auth0-api", "https://dhbw-experts.eu.auth0.com/")));
+                options.AddPolicy("write:auth0-api", policy => policy.Requirements.Add(new HasScopeRequirement("write:auth0-api", "https://dhbw-experts.eu.auth0.com/")));
+                options.AddPolicy("read:profile", policy => policy.Requirements.Add(new HasScopeRequirement("read:profile", "https://dhbw-experts.eu.auth0.com/")));
+                options.AddPolicy("write:profile", policy => policy.Requirements.Add(new HasScopeRequirement("write:profile", "https://dhbw-experts.eu.auth0.com/")));
+                
             });
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
             
@@ -75,7 +84,7 @@ namespace DatabaseAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            
             app.UseCors(options => options
                 .AllowAnyMethod()
                 .AllowAnyHeader()

@@ -23,7 +23,7 @@ namespace DatabaseAPI.Controllers {
         }
 
         [HttpPost("register")]
-        [Authorize("auth0-api")]
+        [Authorize("write:auth0-api")]
         public async Task<IActionResult> register(UserObject userIn) {
             Users user = new Users();
             user.UserId = userIn.auth0UserId;
@@ -46,7 +46,7 @@ namespace DatabaseAPI.Controllers {
         }
         
         [HttpGet("checkdomain")]
-        [Authorize("auth0-api")]
+        [Authorize("read:auth0-api")]
         public async Task<Object> isDomainValid([FromBody]DomainObject domainObject) {
 
             var query =

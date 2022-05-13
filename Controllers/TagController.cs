@@ -19,15 +19,13 @@ namespace DatabaseAPI.Controllers {
             _context = context;
         }
 
-        // GET: /Users/contacts/5
-        //The user assosiated contacts of the user a returned
-        [HttpGet("{id:int}/validations", Name = "getValidationsByTagId")]
+        [HttpGet("{tagId:int}/validations", Name = "getValidationsByTagId")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Object>>> getValidationsByTagId(int id) {
+        public async Task<ActionResult<IEnumerable<Object>>> getValidationsByTagId(int tagId) {
 
             var query =
                 from val in _context.TagValidations
-                where val.Tag == id
+                where val.Tag == tagId
                 select new {
                     validationId = val.ValidationId,
                     tag = val.Tag,
@@ -43,27 +41,55 @@ namespace DatabaseAPI.Controllers {
             }
             return result;
         }
+        
+        public class ValidationIn {
+            public int tag { get; set; }
+            public string validatedBy { get; set; }
+            public string comment { get; set; }
+        }
+        
+        [HttpPost("{tagId:int}/validations", Name = "addTagValidation")]
+        //[Authorize]
+        public async Task<ActionResult<IEnumerable<Object>>> addTagValidation(int tagId, ValidationIn valIn) {
 
-        // GET: /Users/contacts/5
-        //The user assosiated contacts of the user a returned
-        [HttpGet("{id:int}", Name = "getTagByTagId")]
+            TagValidations validation = new TagValidations();
+
+            if (tagId != valIn.tag) {
+                return BadRequest();
+            }
+            
+            validation.Tag = valIn.tag;
+            validation.ValidatedBy = valIn.validatedBy;
+            validation.Comment = valIn.comment;
+
+            _context.TagValidations.Add(validation);
+
+            try {
+                await _context.SaveChangesAsync();
+            } catch (DbUpdateException) {
+                return Conflict();
+            }
+
+            return CreatedAtRoute("getValidationByValId", new { valId = validation.ValidationId }, new { 
+                validationId = validation.ValidationId,
+                tag = validation.Tag,
+                validatedBy = validation.ValidatedBy,
+                comment = validation.Comment,
+                createdAt = validation.CreatedAt 
+            });
+        }
+
+        [HttpGet("{tagId:int}", Name = "getTagByTagId")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<Object>>> getTagByTagId(int id) {
+        public async Task<ActionResult<IEnumerable<Object>>> getTagByTagId(int tagId) {
 
             var query =
                 from tags in _context.Tags
-                where tags.TagId == id
+                where tags.TagId == tagId
                 select new {
                     tagId = tags.TagId,
                     tag = tags.Tag,
                     user = tags.User,
-                    validations = from val in tags.TagValidations select new {
-                        validationId = val.ValidationId,
-                        tag = val.Tag,
-                        validatedBy = val.ValidatedBy,
-                        comment = val.Comment,
-                        CreatedAt = val.CreatedAt
-                },
                     createdAt = tags.CreatedAt
                 };
 
