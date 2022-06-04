@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Xml;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 using DatabaseAPI.Authentication;
@@ -52,16 +53,16 @@ namespace DatabaseAPI
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
-                options.Authority = "https://dhbw-experts.eu.auth0.com/";
-                options.Audience = "https://dhbw-experts-api.azurewebsites.net/";
+                options.Authority = Configuration["Authentication:Authority"];
+                options.Audience = Configuration["Authentication:Audience"];
             });
             
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("read:auth0-api", policy => policy.Requirements.Add(new HasScopeRequirement("read:auth0-api", "https://dhbw-experts.eu.auth0.com/")));
-                options.AddPolicy("write:auth0-api", policy => policy.Requirements.Add(new HasScopeRequirement("write:auth0-api", "https://dhbw-experts.eu.auth0.com/")));
-                options.AddPolicy("read:profile", policy => policy.Requirements.Add(new HasScopeRequirement("read:profile", "https://dhbw-experts.eu.auth0.com/")));
-                options.AddPolicy("write:profile", policy => policy.Requirements.Add(new HasScopeRequirement("write:profile", "https://dhbw-experts.eu.auth0.com/")));
+                options.AddPolicy("read:auth0-api", policy => policy.Requirements.Add(new HasScopeRequirement("read:auth0-api", Configuration["Authentication:Authority"])));
+                options.AddPolicy("write:auth0-api", policy => policy.Requirements.Add(new HasScopeRequirement("write:auth0-api", Configuration["Authentication:Authority"])));
+                options.AddPolicy("read:profile", policy => policy.Requirements.Add(new HasScopeRequirement("read:profile", Configuration["Authentication:Authority"])));
+                options.AddPolicy("write:profile", policy => policy.Requirements.Add(new HasScopeRequirement("write:profile", Configuration["Authentication:Authority"])));
                 
             });
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
@@ -69,6 +70,26 @@ namespace DatabaseAPI
             services.AddSwaggerGen(swagger =>
             {
                 swagger.SwaggerDoc("v1", new OpenApiInfo { Title = "DHBW-Experts API" });
+                swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        Implicit = new OpenApiOAuthFlow
+                        {
+                            Scopes = new Dictionary<string, string>
+                            {
+                                { "openid", "Open Id"},
+                                { "read:profile", "Read Profile"},
+                                { "write:profile", "Write Profile"}
+                            },
+                            AuthorizationUrl = new Uri(Configuration["Authentication:Authority"] + "authorize?audience=" + Configuration["Authentication:Audience"])
+                        }
+                    }
+                });
+                swagger.OperationFilter<SecurityRequirementsOperationFilter>();
             });
             services.AddSwaggerGenNewtonsoftSupport();
             
@@ -98,6 +119,7 @@ namespace DatabaseAPI
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "DHBW-Experts API");
+                c.OAuthClientId(Configuration["Authentication:ClientId"]);
             });
 
             app.UseEndpoints(endpoints =>
