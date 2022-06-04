@@ -49,7 +49,7 @@ namespace DatabaseAPI.Controllers {
         }
         
         [HttpPost("{tagId:int}/validations", Name = "addTagValidation")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Object>>> addTagValidation(int tagId, ValidationIn valIn) {
 
             TagValidations validation = new TagValidations();
@@ -98,6 +98,35 @@ namespace DatabaseAPI.Controllers {
             if (result is null) {
                 return NotFound();
             }
+            return result;
+        }
+        
+        // SEARCH ENGINE
+        
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Object>>> getTagsByText(string tag) {
+            
+            IQueryable<Object> query;
+            List<Object> result;
+            
+            if (!string.IsNullOrEmpty(tag))
+            {
+                query =
+                    from tags in _context.Tags
+                    where tags.Tag.Contains(tag)
+                    select new
+                    {
+                        tag = tags.Tag
+                    };
+
+                result = await query.Distinct().Take(25).ToListAsync();
+            }
+            else
+            {
+                return BadRequest();
+            }
+
             return result;
         }
 

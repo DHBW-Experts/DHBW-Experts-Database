@@ -60,6 +60,12 @@ INSERT INTO [users] (
         '2022-04-30 22:23:21.170'
         ),
         (
+        '627a158214461c006881a509',
+        'unregistriert.ulrike',
+        'student.dhbw-karlsruhe.de',
+        '2022-05-10 09:34:26.023'
+        ),
+        (
         '627b8f4fdf614a006fa372d1',
         'holler.lukas',
         'student.dhbw-karlsruhe.de',

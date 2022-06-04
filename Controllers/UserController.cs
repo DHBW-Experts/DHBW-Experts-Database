@@ -228,6 +228,79 @@ namespace DatabaseAPI.Controllers {
 
             return Ok();
         }
+        
+        // SEARCH ENGINE
+        
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<Object>> searchUsers(string name, string tag, string location, string course, string courseAbbr, string rfid)
+        {
+            IQueryable<VwUsers> query;
+            Object result;
+            
+            if (!string.IsNullOrEmpty(name))
+            {
+                query =
+                    from user in _context.VwUsers
+                    where (user.Firstname + " " + user.Lastname).Contains(name)
+                    select user;
+
+                result = await query.Distinct().OrderBy(users => users.UserId).Take(25).ToListAsync();
+            } 
+            else if (!string.IsNullOrEmpty(tag))
+            {
+                query =
+                    from user in _context.VwUsers
+                    join tags in _context.Tags on user.UserId equals tags.User
+                    where tags.Tag.Equals(tag)
+                    select user;
+
+                result = await query.Distinct().OrderBy(users => users.UserId).Take(25).ToListAsync();
+            } 
+            else if (!string.IsNullOrEmpty(location))
+            {
+                query =
+                    from user in _context.VwUsers
+                    where user.DhbwLocation.Equals(location) && user.Registered.Value
+                    select user;
+
+                result = await query.Distinct().Take(25).ToListAsync();
+            } 
+            else if (!string.IsNullOrEmpty(course))
+            {
+                query =
+                    from user in _context.VwUsers
+                    where user.Course.Equals(course)
+                    select user;
+
+                result = await query.Distinct().Take(25).ToListAsync();
+            } 
+            else if (!string.IsNullOrEmpty(courseAbbr))
+            {
+                query =
+                    from user in _context.VwUsers
+                    where user.CourseAbbr.Equals(courseAbbr)
+                    select user;
+
+                result = await query.Distinct().Take(25).ToListAsync();
+            } 
+            else if (!string.IsNullOrEmpty(rfid))
+            {
+                query =
+                    from user in _context.VwUsers
+                    join data in _context.UserData on user.UserId equals data.User
+                    where data.RfidId == rfid
+                    select user;
+
+                result = await query.FirstOrDefaultAsync();
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+            return result;
+        }
 
     }
 
