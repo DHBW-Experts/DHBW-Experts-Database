@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DatabaseAPI.Controllers {
     [Route("tags")]
@@ -18,20 +19,19 @@ namespace DatabaseAPI.Controllers {
             _context = context;
         }
 
-        // GET: /Users/contacts/5
-        //The user assosiated contacts of the user a returned
-        [HttpGet("{id:int}/validations", Name = "getValidationsByTagId")]
-        public async Task<ActionResult<IEnumerable<Object>>> getValidationsByTagId(int id) {
+        [HttpGet("{tagId:int}/validations", Name = "getValidationsByTagId")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Object>>> getValidationsByTagId(int tagId) {
 
             var query =
                 from val in _context.TagValidations
-                where val.Tag == id
+                where val.Tag == tagId
                 select new {
                     validationId = val.ValidationId,
                     tag = val.Tag,
                     validatedBy = val.ValidatedBy,
                     comment = val.Comment,
-                    tmsCreated = val.TmsCreated
+                    createdAt = val.CreatedAt
                 };
 
             var result = await query.ToListAsync();
@@ -41,43 +41,28 @@ namespace DatabaseAPI.Controllers {
             }
             return result;
         }
-
-        // GET: /Users/contacts/5
-        //The user assosiated contacts of the user a returned
-        [HttpGet("{id:int}", Name = "getTagByTagId")]
-        public async Task<ActionResult<IEnumerable<Object>>> getTagByTagId(int id) {
-
-            var query =
-                from tags in _context.Tags
-                where tags.TagId == id
-                select new {
-                    tagId = tags.TagId,
-                    tag = tags.Tag1,
-                    user = tags.User,
-                    tmsCreated = tags.TmsCreated
-                };
-
-            var result = await query.ToListAsync();
-
-            if (result is null) {
-                return NotFound();
-            }
-            return result;
+        
+        public class ValidationIn {
+            public int tag { get; set; }
+            public string validatedBy { get; set; }
+            public string comment { get; set; }
         }
+        
+        [HttpPost("{tagId:int}/validations", Name = "addTagValidation")]
+        //[Authorize]
+        public async Task<ActionResult<IEnumerable<Object>>> addTagValidation(int tagId, ValidationIn valIn) {
 
+            TagValidations validation = new TagValidations();
 
-        // GET: /Users/contacts/5
-        //The user assosiated contacts of the user a returned
-        [HttpDelete("{id:int}", Name = "deleteTagByTagId")]
-        public async Task<ActionResult> deleteTagByTagId(int id) {
-
-            var tag = await _context.Tags.FindAsync(id);
-
-            if (tag is null) {
-                return NotFound();
+            if (tagId != valIn.tag) {
+                return BadRequest();
             }
+            
+            validation.Tag = valIn.tag;
+            validation.ValidatedBy = valIn.validatedBy;
+            validation.Comment = valIn.comment;
 
-            _context.Tags.Remove(tag);
+            _context.TagValidations.Add(validation);
 
             try {
                 await _context.SaveChangesAsync();
@@ -85,11 +70,37 @@ namespace DatabaseAPI.Controllers {
                 return Conflict();
             }
 
-            return Ok();
+            return CreatedAtRoute("getValidationByValId", new { valId = validation.ValidationId }, new { 
+                validationId = validation.ValidationId,
+                tag = validation.Tag,
+                validatedBy = validation.ValidatedBy,
+                comment = validation.Comment,
+                createdAt = validation.CreatedAt 
+            });
+        }
+
+        [HttpGet("{tagId:int}", Name = "getTagByTagId")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<Object>>> getTagByTagId(int tagId) {
+
+            var query =
+                from tags in _context.Tags
+                where tags.TagId == tagId
+                select new {
+                    tagId = tags.TagId,
+                    tag = tags.Tag,
+                    user = tags.User,
+                    createdAt = tags.CreatedAt
+                };
+
+            var result = await query.ToListAsync();
+
+            if (result is null) {
+                return NotFound();
+            }
+            return result;
         }
 
     }
-
-
 
 }

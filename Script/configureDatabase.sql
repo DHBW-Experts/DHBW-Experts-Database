@@ -1,157 +1,203 @@
-DROP TABLE [CONTACT]
+DROP TABLE [contacts]
 GO
-DROP TABLE [TAG-VALIDATION]
+DROP TABLE [tag_validations]
 GO
-DROP TABLE [TAG]
+DROP TABLE [tags]
 GO
-DROP TABLE [USER]
+DROP TABLE [user_data]
 GO
-DROP TABLE [DHBW]
+DROP TABLE [users]
 GO
-----------------------------------------------------------
+DROP TABLE [dhbw_domains]
+GO
+DROP VIEW [vw_users]
+GO
 
 -- Create DHBW table
-CREATE TABLE "DHBW" (
-    "LOCATION"      VARCHAR(30) NOT NULL,
-    "EMAIL-DOMAIN"  VARCHAR(30) NOT NULL
+CREATE TABLE "dhbw_domains" (
+    "domain"        VARCHAR(30) NOT NULL,
+    "location"      VARCHAR(30) NOT NULL,
 
-	CONSTRAINT "DHBW-PK"
-		PRIMARY KEY ("LOCATION")
+    CONSTRAINT "PK_dhbw_domains"
+        PRIMARY KEY ("domain")
 )
 GO
 
 -- Create USER table
-CREATE TABLE "USER" (
-    "USER-ID"           INT IDENTITY(1000, 1),
-    "FIRSTNAME"         VARCHAR(30) NOT NULL,
-    "LASTNAME"          VARCHAR(30) NOT NULL,
-    "DHBW"              VARCHAR(30) NOT NULL,
-    "COURSE-ABR"        VARCHAR(15) NOT NULL,
-    "COURSE"            VARCHAR(30) NOT NULL,
-    "SPECIALIZATION"    VARCHAR(50),
-    "EMAIL-PREFIX"      VARCHAR(50) NOT NULL,
-    "CITY"              VARCHAR(30),
-    "BIOGRAPHY"         NVARCHAR(1000) COLLATE Latin1_General_100_CI_AI_SC_UTF8,
-    "RFID-ID"           VARCHAR(30),
-    "PW-HASH"           VARCHAR(30) NOT NULL,
-    "IS-VERIFIED"       BIT NOT NULL DEFAULT 0,
-    "VERIFICATION-ID"   INT NOT NULL,
-    "TMS-CREATED"       DATETIME DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE "users" (
+    "user_id"           CHAR(24),
+    "email_prefix"      VARCHAR(30) NOT NULL,
+    "email_domain"      VARCHAR(30) NOT NULL,
+    "created_at"        DATETIME DEFAULT CURRENT_TIMESTAMP
 
-    CONSTRAINT "USER-PK"
-        PRIMARY KEY ("USER-ID"),
+    CONSTRAINT "PK_users"
+        PRIMARY KEY ("user_id"),
 
-	CONSTRAINT "USER-FK-DHBW"
-        FOREIGN KEY ("DHBW") REFERENCES [DHBW]("LOCATION"),
+	CONSTRAINT "FK_users_email_domain"
+        FOREIGN KEY ("email_domain") REFERENCES [dhbw_domains]("domain"),
 
-	CONSTRAINT "USER-UNIQUE-NO-DUPLICATE-EMAILS"
-        UNIQUE ("EMAIL-PREFIX", "DHBW")
+	CONSTRAINT "UQ_users_no_duplicate_emails"
+        UNIQUE ("email_prefix", "email_domain")
+)
+GO
+
+-- Create USER-DATA table
+CREATE TABLE "user_data" (
+    "user"              CHAR(24),
+    "firstname"         VARCHAR(30) NOT NULL,
+    "lastname"          VARCHAR(30) NOT NULL,
+    "course_abbr"       VARCHAR(15) NOT NULL,
+    "course"            VARCHAR(30) NOT NULL,
+    "specialization"    VARCHAR(50),
+    "city"              VARCHAR(30),
+    "biography"         NVARCHAR(1000) COLLATE Latin1_General_100_CI_AI_SC_UTF8,
+    "rfid_id"           VARCHAR(30)
+
+	CONSTRAINT "PK_user-data"
+        PRIMARY KEY ("user"),
+
+    CONSTRAINT "FK_user_data_user_id"
+        FOREIGN KEY ("user") REFERENCES [users]("user_id"),
 )
 GO
 
 -- Create TAG table
-CREATE TABLE "TAG" (
-    "TAG-ID"        INT IDENTITY(1000, 1),
-    "TAG"           VARCHAR(15) NOT NULL,
-    "USER"          INT NOT NULL,
-    "TMS-CREATED"   DATETIME DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE "tags" (
+    "tag_id"        INT IDENTITY(1000, 1),
+    "tag"           VARCHAR(15) NOT NULL,
+    "user"          CHAR(24) NOT NULL,
+    "created_at"    DATETIME DEFAULT CURRENT_TIMESTAMP
 
-    CONSTRAINT "TAG-PK"
-        PRIMARY KEY ("TAG-ID"),
+    CONSTRAINT "PK_tags"
+        PRIMARY KEY ("tag_id"),
 
-	CONSTRAINT "TAG-FK-USER"
-        FOREIGN KEY ("USER") REFERENCES [USER]("USER-ID"),
+	CONSTRAINT "FK_tags-user_id"
+        FOREIGN KEY ("user") REFERENCES [user_data]("user"),
 
-    CONSTRAINT "TAG-UNIQUE-NO-DUPLICATE-TAGS" 
-        UNIQUE ("TAG", "USER")
+    CONSTRAINT "UQ_tags_no_duplicate_tags" 
+        UNIQUE ("tag", "user")
 )
 GO
 
 -- Create TAG-VALIDATION table
-CREATE TABLE "TAG-VALIDATION" (
-    "VALIDATION-ID" INT IDENTITY(1000, 1),
-    "TAG"           INT NOT NULL,
-    "VALIDATED-BY"  INT NOT NULL,
-    "COMMENT"       NVARCHAR(250) COLLATE Latin1_General_100_CI_AI_SC_UTF8,
-    "TMS-CREATED"   DATETIME DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE "tag_validations" (
+    "validation_id" INT IDENTITY(1000, 1),
+    "tag"           INT NOT NULL,
+    "validated_by"  CHAR(24) NOT NULL,
+    "comment"       NVARCHAR(250) COLLATE Latin1_General_100_CI_AI_SC_UTF8,
+    "created_at"    DATETIME DEFAULT CURRENT_TIMESTAMP
 
-    CONSTRAINT "TAG_VALIDATION-PK"
-        PRIMARY KEY ("VALIDATION-ID"),
+    CONSTRAINT "PK_tag_validations"
+        PRIMARY KEY ("validation_id"),
 
-	CONSTRAINT "TAG_VALIDATION-FK-TAG"
-        FOREIGN KEY ("TAG") REFERENCES [TAG]("TAG-ID"),
+	CONSTRAINT "FK_tag_validations_tag"
+        FOREIGN KEY ("tag") REFERENCES [tags]("tag_id"),
 
-	CONSTRAINT "TAG_VALIDATION-FK-USER"
-        FOREIGN KEY ("VALIDATED-BY") REFERENCES [USER]("USER-ID"),
+	CONSTRAINT "FK_tag_validations_validated_by"
+        FOREIGN KEY ("validated_by") REFERENCES [user_data]("user"),
 
-    CONSTRAINT "TAG-VALIDATION-UNIQUE-NO-DUPLICATE-VALIDATIONS" 
-        UNIQUE ("TAG", "VALIDATED-BY")
+    CONSTRAINT "UQ_tag_validations_no_duplicate_validations" 
+        UNIQUE ("tag", "validated_by")
 )
 GO
 
 -- Create CONTACTS table
-CREATE TABLE "CONTACT" (
-    "USER"          INT NOT NULL,
-    "CONTACT"       INT NOT NULL,
-    "TMS-CREATED"   DATETIME DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE "contacts" (
+    "user"          CHAR(24) NOT NULL,
+    "contact"       CHAR(24) NOT NULL,
+    "created_at"    DATETIME DEFAULT CURRENT_TIMESTAMP
 
-	CONSTRAINT "CONTACT-FK-USER"
-        FOREIGN KEY ("USER") REFERENCES [USER]("USER-ID"),
+	CONSTRAINT "FK_contacts_user"
+        FOREIGN KEY ("user") REFERENCES [user_data]("user"),
 
-	CONSTRAINT "CONTACT-FK-USER_CONTACT"
-        FOREIGN KEY ("CONTACT") REFERENCES [USER]("USER-ID"),
+	CONSTRAINT "FK_contacts_contact"
+        FOREIGN KEY ("contact") REFERENCES [user_data]("user"),
 
-    CONSTRAINT "CONTACT-UNIQUE-NO-DUPLICATE-CONTACTS"
-        PRIMARY KEY ("USER", "CONTACT")
+    CONSTRAINT "UQ_contacts_no_duplicate_contacts"
+        PRIMARY KEY ("user", "contact")
 )
 GO
 
+-- Create USER Views
+CREATE VIEW [vw_users] AS
+    SELECT 
+	    [user_id], 
+	    [firstname], 
+	    [lastname], 
+	    CONCAT([email_prefix], '@', [email_domain]) AS email, 
+	    [location] AS dhbw_location,
+	    [course_abbr],
+	    [course],
+	    [specialization],
+	    [city],
+        [biography],
+	    CAST((SELECT CASE WHEN EXISTS(SELECT * FROM [user_data] WHERE [user] = [user_id]) THEN 1 ELSE 0 END) AS BIT) AS registered,
+	    [created_at]
+    FROM [users]
+    LEFT JOIN [user_data] ON [users].[user_id] = [user_data].[user]
+    LEFT JOIN [dhbw_domains] ON [users].[email_domain] = [dhbw_domains].[domain]
+GO
+
 -- Create ON-USER-DELETE Trigger
-CREATE TRIGGER [dbo].[ON-USER-DELETE]
-    ON [dbo].[USER]
+CREATE TRIGGER [dbo].[TGR_on_user_delete]
+    ON [dbo].[users]
     INSTEAD OF DELETE
 AS
-    DELETE FROM [dbo].[CONTACT]
+    DELETE FROM [dbo].[contacts]
 		WHERE 
-			[dbo].[CONTACT].[USER] IN(SELECT deleted.[USER-ID] FROM deleted) OR
-			[dbo].[CONTACT].[CONTACT] IN(SELECT deleted.[USER-ID] FROM deleted)
+			[dbo].[contacts].[user] IN(SELECT deleted.[user_id] FROM deleted) OR
+			[dbo].[contacts].[contact] IN(SELECT deleted.[user_id] FROM deleted)
 
-	DELETE FROM [dbo].[TAG-VALIDATION]
+	DELETE FROM [dbo].[tag_validations]
 		WHERE 
-			[dbo].[TAG-VALIDATION].[VALIDATED-BY] IN(SELECT deleted.[USER-ID] FROM deleted)
+			[dbo].[tag_validations].[validated_by] IN(SELECT deleted.[user_id] FROM deleted)
 
-	DELETE FROM [dbo].[TAG]
+	DELETE FROM [dbo].[tags]
 		WHERE 
-			[dbo].[TAG].[USER] IN(SELECT deleted.[USER-ID] FROM deleted)
+			[dbo].[tags].[user] IN(SELECT deleted.[user_id] FROM deleted)
 
-	DELETE FROM [dbo].[USER]
+    DELETE FROM [dbo].[user_data]
 		WHERE 
-			[dbo].[USER].[USER-ID] IN(SELECT deleted.[USER-ID] FROM deleted)
+			[dbo].[user_data].[user] IN(SELECT deleted.[user_id] FROM deleted)
+
+	DELETE FROM [dbo].[users]
+		WHERE 
+			[dbo].[users].[user_id] IN(SELECT deleted.[user_id] FROM deleted)
+GO
+
+-- Create ON-USER-DATA-DELETE Trigger
+CREATE TRIGGER [dbo].[TGR_on_user_data_delete]
+    ON [dbo].[user_data]
+    INSTEAD OF DELETE
+AS
+    DELETE FROM [dbo].[contacts]
+		WHERE 
+			[dbo].[contacts].[user] IN(SELECT deleted.[user] FROM deleted) OR
+			[dbo].[contacts].[contact] IN(SELECT deleted.[user] FROM deleted)
+
+	DELETE FROM [dbo].[tag_validations]
+		WHERE 
+			[dbo].[tag_validations].[validated_by] IN(SELECT deleted.[user] FROM deleted)
+
+	DELETE FROM [dbo].[tags]
+		WHERE 
+			[dbo].[tags].[user] IN(SELECT deleted.[user] FROM deleted)
+
+    DELETE FROM [dbo].[user_data]
+		WHERE 
+			[dbo].[user_data].[user] IN(SELECT deleted.[user] FROM deleted)
 GO
 
 -- Create ON-TAG-DELETE Trigger
-CREATE TRIGGER [dbo].[ON-TAG-DELETE]
-    ON [dbo].[TAG]
+CREATE TRIGGER [dbo].[TGR_on_tag_delete]
+    ON [dbo].[tags]
     INSTEAD OF DELETE
 AS
-    DELETE FROM [dbo].[TAG-VALIDATION]
+    DELETE FROM [dbo].[tag_validations]
 		WHERE 
-			[dbo].[TAG-VALIDATION].[TAG] IN(SELECT deleted.[TAG-ID] FROM deleted)
+			[dbo].[tag_validations].[tag] IN(SELECT deleted.[tag_id] FROM deleted)
 
-	DELETE FROM [dbo].[TAG]
+	DELETE FROM [dbo].[tags]
 		WHERE 
-			[dbo].[TAG].[TAG-ID] IN(SELECT deleted.[TAG-ID] FROM deleted)
+			[dbo].[tags].[tag_id] IN(SELECT deleted.[tag_id] FROM deleted)
  GO
-
- -- Create ON-DHBW-DELETE Trigger
-CREATE TRIGGER [dbo].[ON-DHBW-DELETE]
-    ON [dbo].[DHBW]
-    INSTEAD OF DELETE
-AS
-    DELETE FROM [dbo].[USER]
-		WHERE 
-			[dbo].[USER].[DHBW] IN(SELECT deleted.[LOCATION] FROM deleted)
-
-	DELETE FROM [dbo].[DHBW]
-		WHERE 
-			[dbo].[DHBW].[LOCATION] IN(SELECT deleted.[LOCATION] FROM deleted)

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DatabaseAPI.Model;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DatabaseAPI.Controllers {
     [Route("register")]
@@ -16,62 +17,50 @@ namespace DatabaseAPI.Controllers {
             _context = context;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> register(User user) {
-            if (user.VerificationId != 0 || user.UserId != 0 || user.IsVerified != false) {
-                return Conflict("Data provided will be set automaticly");
+        [HttpPost("{userId}", Name = "registerUser")]
+        [Authorize("write:profile")]
+        public async Task<IActionResult> registerUser(string userId, VwUsers registeredUser) {
+            
+            var user = _context.VwUsers.FirstOrDefault(u => u.UserId == registeredUser.UserId);
+            var userData = new UserData();
+
+            var isBadRequest =
+                userId != registeredUser.UserId ||
+                registeredUser.Firstname == null ||
+                registeredUser.Lastname == null ||
+                registeredUser.Course == null ||
+                registeredUser.CourseAbbr == null;
+
+            if (user.Registered == true) {
+                return Forbid();
             }
-            user.VerificationId = Functions.generateVerificationCode();
-            _context.Users.Add(user);
-
-            try {
-                await _context.SaveChangesAsync();
-            } catch (DbUpdateException) {
-                return Conflict();
-            }
-
-            var result = new {
-                userId = user.UserId,
-                firstName = user.Firstname,
-                lastname = user.Lastname,
-                dhbw = user.Dhbw,
-                course = user.Course,
-                courseAbr = user.CourseAbr,
-                specialization = user.Specialization,
-                email = user.EmailPrefix + "@" + (await _context.Dhbws.FindAsync(user.Dhbw)).EmailDomain,
-                city = user.City,
-                biography = user.Biography,
-                isVerified = user.IsVerified,
-                tmsCreated = user.TmsCreated
-            };
-
-            return CreatedAtRoute("getUserById", new { id = user.UserId }, result);
-        }
-
-        [HttpPut("{userId:int}/{verificationId:int}")]
-        public async Task<IActionResult> verify(int userId, int verificationId) {
-            User toBeVerified = await _context.Users.FindAsync(userId);
-            if (toBeVerified is not null && !toBeVerified.IsVerified) {
-                int expectedID = toBeVerified.VerificationId;
-
-                if (verificationId == expectedID) {
-                    toBeVerified.IsVerified = true;
-
-                    _context.Users.Update(toBeVerified);
-
-                    try {
-                        await _context.SaveChangesAsync();
-                    } catch (DbUpdateConcurrencyException e) {
-                        Console.WriteLine(e);
-                    }
-                    Console.Write("successfully verified: user {0}, id {1}", userId, verificationId);
-                    return Ok();
-                }
-                Console.Write("verification rejected: wrong id! user {0}, id {1}", userId, verificationId);
+            
+            if (isBadRequest) {
                 return BadRequest();
             }
-            Console.Write("verification rejected: user not found or already verified! user {0}, id {1}", userId, verificationId);
-            return BadRequest();
+
+            userData.User = registeredUser.UserId;
+            userData.Firstname = registeredUser.Firstname;
+            userData.Lastname = registeredUser.Lastname;
+            userData.Course = registeredUser.Course;
+            userData.CourseAbbr = registeredUser.CourseAbbr;
+            userData.Specialization = registeredUser.Specialization;
+            userData.City = registeredUser.City;
+            userData.Biography = registeredUser.Biography;
+            userData.RfidId = null;
+
+            _context.UserData.Add(userData);
+            
+            try {
+                await _context.SaveChangesAsync();
+            } catch (DbUpdateException e)
+            {
+                return BadRequest(e);
+            }
+
+            var result = _context.VwUsers.FirstOrDefault(u => u.UserId == registeredUser.UserId);
+            
+            return CreatedAtRoute("getUserById", new {id = user.UserId}, result);
         }
     }
 }
