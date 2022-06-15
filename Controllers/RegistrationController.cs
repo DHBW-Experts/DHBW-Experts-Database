@@ -32,7 +32,7 @@ namespace DatabaseAPI.Controllers {
                 registeredUser.CourseAbbr == null;
 
             if (user.Registered == true) {
-                return Forbid();
+                return Conflict("User is already registered");
             }
             
             if (isBadRequest) {
@@ -60,7 +60,7 @@ namespace DatabaseAPI.Controllers {
 
             var result = _context.VwUsers.FirstOrDefault(u => u.UserId == registeredUser.UserId);
             
-            return CreatedAtRoute("getUserById", new {id = user.UserId}, result);
+            return CreatedAtRoute("getUserById", new {userId = user.UserId}, result);
         }
     }
 }
