@@ -1,125 +1,136 @@
-DROP TABLE [contacts]
+USE [DHBW-Experts-database]
 GO
-DROP TABLE [tag_validations]
+
+IF EXISTS(SELECT * FROM sys.tables WHERE SCHEMA_NAME(schema_id) LIKE 'dbo' AND name like 'contacts')  
+   DROP TABLE [dbo].[contacts];
 GO
-DROP TABLE [tags]
+IF EXISTS(SELECT * FROM sys.tables WHERE SCHEMA_NAME(schema_id) LIKE 'dbo' AND name like 'tag_validations')  
+   DROP TABLE [dbo].[tag_validations];
 GO
-DROP TABLE [user_data]
+IF EXISTS(SELECT * FROM sys.tables WHERE SCHEMA_NAME(schema_id) LIKE 'dbo' AND name like 'tags')  
+   DROP TABLE [dbo].[tags];
 GO
-DROP TABLE [users]
+IF EXISTS(SELECT * FROM sys.tables WHERE SCHEMA_NAME(schema_id) LIKE 'dbo' AND name like 'user_data')  
+   DROP TABLE [dbo].[user_data];
 GO
-DROP TABLE [dhbw_domains]
+IF EXISTS(SELECT * FROM sys.tables WHERE SCHEMA_NAME(schema_id) LIKE 'dbo' AND name like 'users')  
+   DROP TABLE [dbo].[users];
 GO
-DROP VIEW [vw_users]
+IF EXISTS(SELECT * FROM sys.tables WHERE SCHEMA_NAME(schema_id) LIKE 'dbo' AND name like 'dhbw_domains')  
+   DROP TABLE [dbo].[dhbw_domains];
 GO
+IF EXISTS(SELECT * FROM sys.views WHERE SCHEMA_NAME(schema_id) LIKE 'dbo' AND name like 'vw_users')  
+   DROP VIEW [dbo].[vw_users];
+GO
+
 
 -- Create DHBW table
-CREATE TABLE "dhbw_domains" (
-    "domain"        VARCHAR(30) NOT NULL,
-    "location"      VARCHAR(30) NOT NULL,
+CREATE TABLE [dbo].[dhbw_domains] (
+    [domain]        VARCHAR(30) NOT NULL,
+    [location]      VARCHAR(30) NOT NULL,
 
-    CONSTRAINT "PK_dhbw_domains"
-        PRIMARY KEY ("domain")
+    CONSTRAINT [PK_dhbw_domains]
+        PRIMARY KEY ([domain])
 )
 GO
 
 -- Create USER table
-CREATE TABLE "users" (
-    "user_id"           CHAR(24),
-    "email_prefix"      VARCHAR(30) NOT NULL,
-    "email_domain"      VARCHAR(30) NOT NULL,
-    "created_at"        DATETIME DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE [dbo].[users] (
+    [user_id]           CHAR(24),
+    [email_prefix]      VARCHAR(30) NOT NULL,
+    [email_domain]      VARCHAR(30) NOT NULL,
+    [created_at]        DATETIME DEFAULT CURRENT_TIMESTAMP
 
-    CONSTRAINT "PK_users"
-        PRIMARY KEY ("user_id"),
+    CONSTRAINT [PK_users]
+        PRIMARY KEY ([user_id]),
 
-	CONSTRAINT "FK_users_email_domain"
-        FOREIGN KEY ("email_domain") REFERENCES [dhbw_domains]("domain"),
+	CONSTRAINT [FK_users_email_domain]
+        FOREIGN KEY ([email_domain]) REFERENCES [dhbw_domains]([domain]),
 
-	CONSTRAINT "UQ_users_no_duplicate_emails"
-        UNIQUE ("email_prefix", "email_domain")
+	CONSTRAINT [UQ_users_no_duplicate_emails]
+        UNIQUE ([email_prefix], [email_domain])
 )
 GO
 
 -- Create USER-DATA table
-CREATE TABLE "user_data" (
-    "user"              CHAR(24),
-    "firstname"         VARCHAR(30) NOT NULL,
-    "lastname"          VARCHAR(30) NOT NULL,
-    "course_abbr"       VARCHAR(15) NOT NULL,
-    "course"            VARCHAR(30) NOT NULL,
-    "specialization"    VARCHAR(50),
-    "city"              VARCHAR(30),
-    "biography"         NVARCHAR(1000) COLLATE Latin1_General_100_CI_AI_SC_UTF8,
-    "rfid_id"           VARCHAR(30)
+CREATE TABLE [dbo].[user_data] (
+    [user]              CHAR(24),
+    [firstname]         VARCHAR(30) NOT NULL,
+    [lastname]          VARCHAR(30) NOT NULL,
+    [course_abbr]       VARCHAR(15) NOT NULL,
+    [course]            VARCHAR(30) NOT NULL,
+    [specialization]    VARCHAR(50),
+    [city]              VARCHAR(30),
+    [biography]         NVARCHAR(1000) COLLATE Latin1_General_100_CI_AI_SC_UTF8,
+    [rfid_id]           VARCHAR(30)
 
-	CONSTRAINT "PK_user-data"
-        PRIMARY KEY ("user"),
+	CONSTRAINT [PK_user-data]
+        PRIMARY KEY ([user]),
 
-    CONSTRAINT "FK_user_data_user_id"
-        FOREIGN KEY ("user") REFERENCES [users]("user_id"),
+    CONSTRAINT [FK_user_data_user_id]
+        FOREIGN KEY ([user]) REFERENCES [users]([user_id]),
 )
 GO
 
 -- Create TAG table
-CREATE TABLE "tags" (
-    "tag_id"        INT IDENTITY(1000, 1),
-    "tag"           VARCHAR(15) NOT NULL,
-    "user"          CHAR(24) NOT NULL,
-    "created_at"    DATETIME DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE [dbo].[tags] (
+    [tag_id]        INT IDENTITY(1000, 1),
+    [tag]           VARCHAR(15) NOT NULL,
+    [user]          CHAR(24) NOT NULL,
+    [created_at]    DATETIME DEFAULT CURRENT_TIMESTAMP
 
-    CONSTRAINT "PK_tags"
-        PRIMARY KEY ("tag_id"),
+    CONSTRAINT [PK_tags]
+        PRIMARY KEY ([tag_id]),
 
-	CONSTRAINT "FK_tags-user_id"
-        FOREIGN KEY ("user") REFERENCES [user_data]("user"),
+	CONSTRAINT [FK_tags-user_id]
+        FOREIGN KEY ([user]) REFERENCES [user_data]([user]),
 
-    CONSTRAINT "UQ_tags_no_duplicate_tags" 
-        UNIQUE ("tag", "user")
+    CONSTRAINT [UQ_tags_no_duplicate_tags] 
+        UNIQUE ([tag], [user])
 )
 GO
 
 -- Create TAG-VALIDATION table
-CREATE TABLE "tag_validations" (
-    "validation_id" INT IDENTITY(1000, 1),
-    "tag"           INT NOT NULL,
-    "validated_by"  CHAR(24) NOT NULL,
-    "comment"       NVARCHAR(250) COLLATE Latin1_General_100_CI_AI_SC_UTF8,
-    "created_at"    DATETIME DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE [dbo].[tag_validations] (
+    [validation_id] INT IDENTITY(1000, 1),
+    [tag]           INT NOT NULL,
+    [validated_by]  CHAR(24) NOT NULL,
+    [comment]       NVARCHAR(250) COLLATE Latin1_General_100_CI_AI_SC_UTF8,
+    [created_at]    DATETIME DEFAULT CURRENT_TIMESTAMP
 
-    CONSTRAINT "PK_tag_validations"
-        PRIMARY KEY ("validation_id"),
+    CONSTRAINT [PK_tag_validations]
+        PRIMARY KEY ([validation_id]),
 
-	CONSTRAINT "FK_tag_validations_tag"
-        FOREIGN KEY ("tag") REFERENCES [tags]("tag_id"),
+	CONSTRAINT [FK_tag_validations_tag]
+        FOREIGN KEY ([tag]) REFERENCES [tags]([tag_id]),
 
-	CONSTRAINT "FK_tag_validations_validated_by"
-        FOREIGN KEY ("validated_by") REFERENCES [user_data]("user"),
+	CONSTRAINT [FK_tag_validations_validated_by]
+        FOREIGN KEY ([validated_by]) REFERENCES [user_data]([user]),
 
-    CONSTRAINT "UQ_tag_validations_no_duplicate_validations" 
-        UNIQUE ("tag", "validated_by")
+    CONSTRAINT [UQ_tag_validations_no_duplicate_validations] 
+        UNIQUE ([tag], [validated_by])
 )
 GO
 
 -- Create CONTACTS table
-CREATE TABLE "contacts" (
-    "user"          CHAR(24) NOT NULL,
-    "contact"       CHAR(24) NOT NULL,
-    "created_at"    DATETIME DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE [dbo].[contacts] (
+    [user]          CHAR(24) NOT NULL,
+    [contact]       CHAR(24) NOT NULL,
+    [created_at]    DATETIME DEFAULT CURRENT_TIMESTAMP
 
-	CONSTRAINT "FK_contacts_user"
-        FOREIGN KEY ("user") REFERENCES [user_data]("user"),
+	CONSTRAINT [FK_contacts_user]
+        FOREIGN KEY ([user]) REFERENCES [user_data]([user]),
 
-	CONSTRAINT "FK_contacts_contact"
-        FOREIGN KEY ("contact") REFERENCES [user_data]("user"),
+	CONSTRAINT [FK_contacts_contact]
+        FOREIGN KEY ([contact]) REFERENCES [user_data]([user]),
 
-    CONSTRAINT "UQ_contacts_no_duplicate_contacts"
-        PRIMARY KEY ("user", "contact")
+    CONSTRAINT [UQ_contacts_no_duplicate_contacts]
+        PRIMARY KEY ([user], [contact])
 )
 GO
 
 -- Create USER Views
-CREATE VIEW [vw_users] AS
+CREATE VIEW [dbo].[vw_users] AS
     SELECT 
 	    [user_id], 
 	    [firstname], 

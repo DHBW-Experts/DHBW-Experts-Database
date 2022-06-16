@@ -1,3 +1,5 @@
+USE [DHBW-Experts-database]
+
 DELETE FROM [contacts]
 GO
 DELETE FROM [tag_validations]
