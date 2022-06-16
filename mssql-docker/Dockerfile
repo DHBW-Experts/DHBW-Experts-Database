@@ -8,6 +8,3 @@ COPY ./mssql-docker/setup_database.sh setup_database.sh
 COPY ./mssql-docker/entrypoint.sh entrypoint.sh
 
 CMD /bin/bash ./entrypoint.sh
-
-# RUN ( /opt/mssql/bin/sqlservr --accept-eula & ) | grep -q "Service Broker manager has started" \
-#     && /bin/bash ./entrypoint.sh
