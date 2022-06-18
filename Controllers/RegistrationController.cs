@@ -53,9 +53,9 @@ namespace DatabaseAPI.Controllers {
             
             try {
                 await _context.SaveChangesAsync();
-            } catch (DbUpdateException e)
+            } catch (DbUpdateException)
             {
-                return BadRequest(e);
+                return BadRequest();
             }
 
             var result = _context.VwUsers.FirstOrDefault(u => u.UserId == registeredUser.UserId);

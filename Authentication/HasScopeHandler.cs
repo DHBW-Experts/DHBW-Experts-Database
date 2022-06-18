@@ -37,8 +37,6 @@ namespace DatabaseAPI.Authentication
                 if(userId != userIdOfRequest && userId != "CwGPmQUnQ4s4R1jfkOxANVwQtfZSkmYr@clients"){
                     userIdsMatch = false;
                 }
-                Console.WriteLine("UserId:    " + userId);
-                Console.WriteLine("RequestId: " + userIdOfRequest);
             }
 
             // Succeed if the scope array contains the required scope

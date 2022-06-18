@@ -138,19 +138,18 @@ namespace DatabaseAPI.Controllers {
 
             try {
                 await _context.SaveChangesAsync();
-            } catch (DbUpdateException e) {
-                return Conflict(e);
+            } catch (DbUpdateException) {
+                return Conflict();
             }
 
             var result = new {
                     tagId = tag.TagId,
                     tag = tag.Tag,
                     user = tag.User,
-                    validations = new int[0],
                     createdAt = tag.CreatedAt
                 };
 
-            return CreatedAtRoute("getTagByTagId", new { userId = tag.TagId }, result);
+            return CreatedAtRoute("getTagByTagId", new { tagId = tag.TagId }, result);
         }
 
         [HttpDelete("{userId}/tags/{tagId:int}", Name = "deleteTagByTagId")]
