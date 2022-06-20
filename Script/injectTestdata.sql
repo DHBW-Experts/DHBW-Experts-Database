@@ -128,7 +128,7 @@ INSERT INTO [user_data] (
         (
         '62aa4b4870857b0a5a5fb053',
         'Ralph', 
-        'Böhm',
+        'Boehm',
         'TINF20B2', 
         'Informatik',
         null,
