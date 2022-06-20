@@ -68,6 +68,12 @@ INSERT INTO [users] (
         '2022-05-10 09:34:26.023'
         ),
         (
+        '62aa4b4870857b0a5a5fb053',
+        'boehm.ralph',
+        'student.dhbw-karlsruhe.de',
+        '2022-06-19 09:34:26.023'
+        ),
+        (
         '627b8f4fdf614a006fa372d1',
         'holler.lukas',
         'student.dhbw-karlsruhe.de',
@@ -120,6 +126,17 @@ INSERT INTO [user_data] (
         '3C'
         ),
         (
+        '62aa4b4870857b0a5a5fb053',
+        'Ralph', 
+        'Boehm',
+        'TINF20B2', 
+        'Informatik',
+        null,
+        'Karlsruhe',
+        N'Software-Entwickler bei Atruvia, Schwerpunkt Angular',
+        '04:25:10:5A:1B:5C:80'
+        ),
+        (
         '627b8f4fdf614a006fa372d1',
         'Lukas', 
         'Holler',
@@ -142,13 +159,18 @@ INSERT INTO [tags] ([tag], [user])
         ('AdA',         '626db6676c48dc006a2dcb17'),
         ('TypeScript',  '626db6963b37a6006f7a7174'),
         ('NodeJS',      '626db6963b37a6006f7a7174'),
-        ('SQL',         '626db6963b37a6006f7a7174')
+        ('SQL',         '626db6963b37a6006f7a7174'),
+        ('Angular',     '62aa4b4870857b0a5a5fb053'),
+        ('Ionic',     '62aa4b4870857b0a5a5fb053'),
+        ('Java',     '62aa4b4870857b0a5a5fb053'),
+        ('CS:GO',     '62aa4b4870857b0a5a5fb053')
 GO
 ---------------------------------
 INSERT INTO [tag_validations] ([tag], [validated_by], [comment])
     VALUES 
         (1000, '626db6676c48dc006a2dcb17', N'Kann er wirklich, habs gesehen!'),
-        (1002, '626db6963b37a6006f7a7174', N'Hat in theoretischer Informatik eine 1.0 geschrieben')
+        (1002, '626db6963b37a6006f7a7174', N'Hat in theoretischer Informatik eine 1.0 geschrieben'),
+        (1012, '626db6676c48dc006a2dcb17', N'+rep sehr guter Spieler')
 GO
 ---------------------------------
 INSERT INTO [contacts] ([user], [contact])
