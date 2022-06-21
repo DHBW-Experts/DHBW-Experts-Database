@@ -1,0 +1,934 @@
+{
+	"info": {
+		"_postman_id": "72cc96b5-bfcc-45e7-842a-07af6b144f9e",
+		"name": "DHBW-Experts API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth0",
+			"item": [
+				{
+					"name": "Check if email-domain is valid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const baseUrl = pm.collectionVariables.get(\"baseUrl\");\r",
+									"const bearer = pm.environment.get(\"currentAccessToken\");\r",
+									"\r",
+									"const checkEmailDomainNoAuth = {\r",
+									"    url: `${baseUrl}/auth0/checkdomain`,\r",
+									"    method: 'GET',\r",
+									"    header: [\r",
+									"        'Content-Type:application/json',\r",
+									"    ],\r",
+									"    body: {\r",
+									"        mode: 'application/json',\r",
+									"        raw: JSON.stringify({\r",
+									"        \t\"domain\": \"example.com\"\r",
+									"        })\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.test(\"Endpoint is protected\", function () {\r",
+									"\r",
+									"    pm.sendRequest(checkEmailDomainNoAuth, function (err, response) {\r",
+									"        pm.expect(response.code).to.eql(401);\r",
+									"    });\r",
+									"\r",
+									"});\r",
+									"\r",
+									"{\r",
+									"    var parsedResponse = pm.response.json();\r",
+									"\r",
+									"    var schema = {\r",
+									"        \"type\" : \"object\",\r",
+									"        \"properties\": {\r",
+									"            \"domain\": { \"type\": \"string\" },\r",
+									"            \"isValid\": { \"type\": \"boolean\" },\r",
+									"        },\r",
+									"        \"additionalProperties\": false,\r",
+									"        \"required\": [ \"domain\", \"isValid\" ]\r",
+									"    };\r",
+									"\r",
+									"    pm.test('Response-Schema is valid', function () {\r",
+									"        pm.expect(pm.response).to.have.jsonSchema(schema)\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"Checking 'student.dhbw-karlsruhe.de' returns true\", function () {\r",
+									"        pm.expect(parsedResponse.isValid).to.be.true;\r",
+									"    });\r",
+									"\r",
+									"}\r",
+									"\r",
+									"const checkFaultyDomain = {\r",
+									"    url: `${baseUrl}/auth0/checkdomain`,\r",
+									"    method: 'GET',\r",
+									"    header: [\r",
+									"        'Content-Type:application/json',\r",
+									"        `Authorization:Bearer ${bearer}`,\r",
+									"    ],\r",
+									"    body: {\r",
+									"        mode: 'application/json',\r",
+									"        raw: JSON.stringify({\r",
+									"        \t\"domain\": \"web.de\"\r",
+									"        })\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(checkFaultyDomain, function (err, response) {\r",
+									"    var parsedResponse = response.json();\r",
+									"\r",
+									"    pm.test(\"Checking 'web.de' returns false\", function () {\r",
+									"        pm.expect(parsedResponse.isValid).to.be.false;\r",
+									"    });\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"domain\": \"student.dhbw-karlsruhe.de\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth0/checkdomain",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth0",
+								"checkdomain"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initial user registration by Auth0",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"auth0UserId\": \"000000000000000000000000\",\n  \"email\": \"mustermann.max@example.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth0/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth0",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tags",
+			"item": [
+				{
+					"name": "Search for tags",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/tags?tag=latex",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tags"
+							],
+							"query": [
+								{
+									"key": "tag",
+									"value": "latex"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get tags by user-id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/:user-id/tags",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":user-id",
+								"tags"
+							],
+							"variable": [
+								{
+									"key": "user-id",
+									"value": "626db5fc4105f20069997435"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add tag to user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:user-id/tags/:text",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":user-id",
+								"tags",
+								":text"
+							],
+							"variable": [
+								{
+									"key": "user-id",
+									"value": "626db5fc4105f20069997435"
+								},
+								{
+									"key": "text",
+									"value": "latex",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete tag by tag-id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:user-id/tags/:tag-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":user-id",
+								"tags",
+								":tag-id"
+							],
+							"variable": [
+								{
+									"key": "user-id",
+									"value": "626db5fc4105f20069997435"
+								},
+								{
+									"key": "tag-id",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get tag by tag-id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/tags/:tag-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tags",
+								":tag-id"
+							],
+							"variable": [
+								{
+									"key": "tag-id",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tag-Validations",
+			"item": [
+				{
+					"name": "Get validation by val-id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tag-validations/:val-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tag-validations",
+								":val-id"
+							],
+							"variable": [
+								{
+									"key": "val-id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete tag-validation by val-id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/tag-validations/:val-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tag-validations",
+								":val-id"
+							],
+							"variable": [
+								{
+									"key": "val-id",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get validations by tag-id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/tags/:tag-id/validations",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tags",
+								":tag-id",
+								"validations"
+							],
+							"variable": [
+								{
+									"key": "tag-id",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add validation to tag",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "text/plain"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tag\": 1000,\n  \"validatedBy\": \"626db6676c48dc006a2dcb17\",\n  \"comment\": \"validation text\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/tags/:tag-id/validations",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"tags",
+								":tag-id",
+								"validations"
+							],
+							"variable": [
+								{
+									"key": "tag-id",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Search for users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const baseUrl = pm.collectionVariables.get(\"baseUrl\");\r",
+									"const bearer = pm.environment.get(\"currentAccessToken\");\r",
+									"\r",
+									"const searchUsersMustermannNoAuth = {\r",
+									"    url: `${baseUrl}/users?name=mustermann`,\r",
+									"    method: 'GET',\r",
+									"};\r",
+									"\r",
+									"pm.test(\"Endpoint is protected\", function () {\r",
+									"\r",
+									"    pm.sendRequest(searchUsersMustermannNoAuth, function (err, response) {\r",
+									"        pm.expect(response.code).to.eql(401);\r",
+									"    });\r",
+									"\r",
+									"});\r",
+									"\r",
+									"const searchUsersMustermann = {\r",
+									"    url: `${baseUrl}/users?name=mustermann`,\r",
+									"    method: 'GET',\r",
+									"    header: `Authorization:Bearer ${bearer}`,\r",
+									"};\r",
+									"\r",
+									"pm.sendRequest(searchUsersMustermann, function (err, response) {\r",
+									"    var parsedResponse = response.json();\r",
+									"\r",
+									"    var schema = {\r",
+									"        \"type\" : \"array\",\r",
+									"        \"items\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"userId\": { \"type\": \"string\" },\r",
+									"                \"firstname\": { \"type\": \"string\" },\r",
+									"                \"lastname\": { \"type\": \"string\" },\r",
+									"                \"email\": { \"type\": \"string\" },\r",
+									"                \"dhbwLocation\": { \"type\": \"string\" },\r",
+									"                \"courseAbbr\": { \"type\": \"string\" },\r",
+									"                \"course\": { \"type\": \"string\" },\r",
+									"                \"specialization\": { \"type\": [\"string\", \"null\"] },\r",
+									"                \"city\": { \"type\": [\"string\", \"null\"] },\r",
+									"                \"biography\": { \"type\": [\"string\", \"null\"] },\r",
+									"                \"registered\": { \"type\": \"boolean\" },\r",
+									"                \"createdAt\": { \"type\": \"string\" },\r",
+									"            },\r",
+									"            \"additionalProperties\": false,\r",
+									"        }\r",
+									"    };\r",
+									"\r",
+									"    pm.test('Response-Schema is valid', function () {\r",
+									"        pm.expect(response).to.have.jsonSchema(schema)\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"Searching for users with 'name=mustermann' returns 3 entities\", function () {\r",
+									"        pm.expect(parsedResponse.length).to.eql(3);\r",
+									"    });\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users?name=mustermann",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "mustermann"
+								},
+								{
+									"key": "tag",
+									"value": "latex",
+									"description": "You can only submit one query parameter at a time!",
+									"disabled": true
+								},
+								{
+									"key": "location",
+									"value": "karlsruhe",
+									"description": "You can only submit one query parameter at a time!",
+									"disabled": true
+								},
+								{
+									"key": "course",
+									"value": "informatik",
+									"description": "You can only submit one query parameter at a time!",
+									"disabled": true
+								},
+								{
+									"key": "courseAbbr",
+									"value": "tinf20b2",
+									"description": "You can only submit one query parameter at a time!",
+									"disabled": true
+								},
+								{
+									"key": "rfid",
+									"value": "ff:ff:ff:ff:ff:ff:ff:ff",
+									"description": "You can only submit one query parameter at a time!",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by user-id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:user-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":user-id"
+							],
+							"variable": [
+								{
+									"key": "user-id",
+									"value": "626db5fc4105f20069997435"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit user by user-id",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"626db5fc4105f20069997435\",\n    \"firstname\": \"Max\",\n    \"lastname\": \"Mustermann\",\n    \"email\": \"mustermann.max@student.dhbw-karlsruhe.de\",\n    \"dhbwLocation\": \"Karlsruhe\",\n    \"courseAbbr\": \"TINF20B2\",\n    \"course\": \"Informatik\",\n    \"specialization\": null,\n    \"city\": \"Ettlingen\",\n    \"biography\": \"Hello World\",\n    \"registered\": true,\n    \"rfidId\": \"ff:ff:ff:ff:ff:ff:ff:ff\",\n    \"createdAt\": \"2022-04-30T22:19:40.413\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/:user-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":user-id"
+							],
+							"variable": [
+								{
+									"key": "user-id",
+									"value": "626db5fc4105f20069997435"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user by user-id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:user-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":user-id"
+							],
+							"variable": [
+								{
+									"key": "user-id",
+									"value": "626db5fc4105f20069997435"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"626db5fc4105f20069997435\",\n    \"firstname\": \"Max\",\n    \"lastname\": \"Mustermann\",\n    \"email\": \"mustermann.max@student.dhbw-karlsruhe.de\",\n    \"dhbwLocation\": \"Karlsruhe\",\n    \"courseAbbr\": \"TINF20B2\",\n    \"course\": \"Informatik\",\n    \"specialization\": null,\n    \"city\": \"Ettlingen\",\n    \"biography\": \"Hello World\",\n    \"registered\": false,\n    \"createdAt\": \"2022-04-30T22:19:40.413\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/register/:user-id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"register",
+								":user-id"
+							],
+							"variable": [
+								{
+									"key": "user-id",
+									"value": "626db5fc4105f20069997435"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Contacts",
+			"item": [
+				{
+					"name": "Add contact to user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:user-id/contacts/:user-id-contact",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":user-id",
+								"contacts",
+								":user-id-contact"
+							],
+							"variable": [
+								{
+									"key": "user-id",
+									"value": "626db5fc4105f20069997435"
+								},
+								{
+									"key": "user-id-contact",
+									"value": "626db6676c48dc006a2dcb17"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get contacts by user-id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/plain"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/:user-id/contacts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":user-id",
+								"contacts"
+							],
+							"variable": [
+								{
+									"key": "user-id",
+									"value": "626db5fc4105f20069997435"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete contact by user-id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/:user-id/contacts/:user-id-contact",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":user-id",
+								"contacts",
+								":user-id-contact"
+							],
+							"variable": [
+								{
+									"key": "user-id",
+									"value": "626db5fc4105f20069997435"
+								},
+								{
+									"key": "user-id-contact",
+									"value": "626db6676c48dc006a2dcb17"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "audience",
+				"value": {
+					"1e71fc40-eb18-4b3d-af82-8db25750465b": "https://dhbw-experts-api.azurewebsites.net/"
+				},
+				"type": "any"
+			},
+			{
+				"key": "tokenName",
+				"value": "Test Token",
+				"type": "string"
+			},
+			{
+				"key": "challengeAlgorithm",
+				"value": "S256",
+				"type": "string"
+			},
+			{
+				"key": "useBrowser",
+				"value": true,
+				"type": "boolean"
+			},
+			{
+				"key": "scope",
+				"value": "read:auth0-api write:auth0-api read:profile write:profile",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "client_credentials",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "{{auth0_clientsecret}}",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{auth0_clientid}}",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "https://dhbw-experts.eu.auth0.com/oauth/token",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "https://dhbw-experts.eu.auth0.com/oauth/token",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"const client_id = pm.environment.get('auth0_clientid');",
+					"const client_secret = pm.environment.get('auth0_clientsecret');",
+					"",
+					"const echoPostRequest = {",
+					"  url: 'https://dhbw-experts.eu.auth0.com/oauth/token',",
+					"  method: 'POST',",
+					"  header: 'Content-Type:application/json',",
+					"  body: {",
+					"    mode: 'application/json',",
+					"    raw: JSON.stringify(",
+					"        {",
+					"        \tclient_id: client_id,",
+					"        \tclient_secret: client_secret,",
+					"        \taudience:'https://dhbw-experts-api.azurewebsites.net/',",
+					"            scope: \"read:auth0-api write:auth0-api read:profile write:profile\",",
+					"        \tgrant_type:'client_credentials'",
+					"        })",
+					"  }",
+					"};",
+					"",
+					"var getToken = true;",
+					"",
+					"if (!pm.environment.get('accessTokenExpiry') || ",
+					"    !pm.environment.get('currentAccessToken')) {",
+					"    console.log('Token or expiry date are missing')",
+					"} else if (pm.environment.get('accessTokenExpiry') <= (new Date()).getTime()) {",
+					"    console.log('Token is expired')",
+					"} else {",
+					"    getToken = false;",
+					"    console.log('Token and expiry date are all good');",
+					"}",
+					"",
+					"if (getToken === true) {",
+					"    pm.sendRequest(echoPostRequest, function (err, res) {",
+					"    console.log(err ? err : res.json());",
+					"        if (err === null) {",
+					"            console.log('Saving the token and expiry date')",
+					"            var responseJson = res.json();",
+					"            pm.environment.set('currentAccessToken', responseJson.access_token)",
+					"    ",
+					"            var expiryDate = new Date();",
+					"            expiryDate.setSeconds(expiryDate.getSeconds() + responseJson.expires_in);",
+					"            pm.environment.set('accessTokenExpiry', expiryDate.getTime());",
+					"        }",
+					"    });",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:4201",
+			"type": "string"
+		}
+	]
+}
